@@ -7,7 +7,7 @@ LICENSE = "BSD License"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="0.0.0",
+    version="0.0.1",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
@@ -28,5 +28,15 @@ setuptools.setup(
     package_data={
               'src.pfctoolkit.data': ['*.nii.gz']
     },
+    install_requires=[
+        "tqdm",
+        "numba",
+        "numpy",
+        "pandas",
+        "h5py",
+        "nilearn",
+        "natsort",
+        "fslpy"
+    ],
     python_requires=">=3.6",
 )
