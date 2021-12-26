@@ -11,7 +11,7 @@
         "chunk_name" : "MNI152_2mm_dil_3209v_91c",
         "num_chunks" : 91,
         "chunk_size" : 3209,
-        "chunk_idx" : "/Users/williamdrew/projects/pfc-toolkit/src/pfctoolkit/chunks/MNI152_2mm_dil_3209v_91c/chunk_idx.nii.gz",
-        "voxel_idx" : "/Users/williamdrew/projects/pfc-toolkit/src/pfctoolkit/chunks/MNI152_2mm_dil_3209v_91c/voxel_idx.nii.gz"
+        "chunk_idx" : "/Volumes/discovery/chunks/MNI152_2mm_dil_3209v_91c/chunk_idx.nii.gz",
+        "voxel_idx" : "/Volumes/discovery/chunks/MNI152_2mm_dil_3209v_91c/voxel_idx.nii.gz"
     }
 }
