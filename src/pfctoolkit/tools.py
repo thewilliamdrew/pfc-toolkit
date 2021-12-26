@@ -5,16 +5,6 @@ import os
 import numpy as np
 from nilearn import image
 
-def binarize(niimg = None, standard = None):
-    """Binarize a Nifti.
-    Args:
-        niimg (nibabel.nifti1.Nifti1Image): Nifti to binarize.
-        standard (nibabel.nifti1.Nifti1Image): Standard Nifti template.
-    Returns:
-        binary_niimg (nibabel.nifti1.Nifti1Image): Binarized Nifti.
-    """
-    return image.new_img_like(standard, niimg.get_fdata() > 0)
-
 class NiftiMasker:
     """A Faster NiftiMasker.
     Attributes:
