@@ -25,8 +25,9 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
+    include_package_data=True,
     package_data={
-              'src.pfctoolkit.data': ['*.nii.gz']
+        'pfctoolkit.data': ['*.nii.gz']
     },
     install_requires=[
         "tqdm",

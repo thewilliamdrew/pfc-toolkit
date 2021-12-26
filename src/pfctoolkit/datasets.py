@@ -1,6 +1,8 @@
 from nilearn import image
 import importlib.resources as pkg_resources
 
+import pfctoolkit
+
 datasets = {
     "MNI152_T1_2mm_brain" : "MNI152_T1_2mm_brain.nii.gz",
     "MNI152_T1_2mm_brain_mask" : "MNI152_T1_2mm_brain_mask.nii.gz",
