@@ -2,8 +2,44 @@
 # Author: William Drew <wdrew@bwh.harvard.edu>
 
 import os
+import csv
 import numpy as np
+from glob import glob
 from nilearn import image
+
+def load_roi(roi_path):
+    """Load ROIs from path or csv.
+
+    Parameters
+    ----------
+    roi_path (str):
+        Path to CSV containing paths to NIfTI images OR
+        Path to directory containing NIfTI images OR
+        Path to NIfTI image
+    
+    Returns
+    -------
+    roi_paths (list of str):
+        List of paths to NIfTI image ROIs
+    
+    """
+    roi_extension = os.path.basename(roi_path).split('.')[1:]
+    if 'csv' in roi_extension:
+        with open(roi_path, newline='') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+        roi_paths = [path for line in data for path in line]
+    elif 'nii' in roi_extension:
+        roi_paths = [roi_path]
+    elif os.path.isdir(roi_path):
+        roi_paths = glob(os.path.abspath(roi_path)+"*.nii*")
+        if(len(roi_paths) == 0):
+            raise FileNotFoundError("No NIfTI images found!")
+    else:
+        raise ValueError("Input File is not a NIfTI or a CSV containing paths \
+                          to a list of NIfTIs")
+    print(f"Found {len(roi_paths)} ROIs...")
+    return roi_paths
 
 class NiftiMasker:
     """A Faster NiftiMasker.
@@ -16,7 +52,6 @@ class NiftiMasker:
             outside the brain.
         
     """
-
     def __init__(self, mask_img = None):
         """
         Args:
