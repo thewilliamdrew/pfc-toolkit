@@ -1,0 +1,10 @@
+{
+    "name" : "discovery-yeo1000_dil",
+    "mask" : "MNI152_T1_2mm_brain_mask_dil",
+    "avgr" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/AvgR",
+    "fz" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/AvgR_Fz",
+    "t" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/T",
+    "combo" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/Combo",
+    "std" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/",
+    "norm" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/"
+}
