@@ -5,6 +5,13 @@
     "fz" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/AvgR_Fz",
     "t" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/T",
     "combo" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/Combo",
-    "std" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/",
-    "norm" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/"
+    "std" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/yeo1000_dil_mask_TC_std_weighted.nii.gz",
+    "norm" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/yeo1000_dil_mask_TC_norm_weighted.nii.gz",
+    "chunk" : {
+        "chunk_name" : "MNI152_2mm_dil_3209v_91c",
+        "num_chunks" : 91,
+        "chunk_size" : 3209,
+        "chunk_idx" : "/Users/williamdrew/projects/pfc-toolkit/src/pfctoolkit/chunks/MNI152_2mm_dil_3209v_91c/chunk_idx.nii.gz",
+        "voxel_idx" : "/Users/williamdrew/projects/pfc-toolkit/src/pfctoolkit/chunks/MNI152_2mm_dil_3209v_91c/voxel_idx.nii.gz"
+    }
 }
