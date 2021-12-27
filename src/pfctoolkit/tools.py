@@ -6,6 +6,7 @@ import csv
 import numpy as np
 from glob import glob
 from nilearn import image
+from nilearn._utils import check_niimg
 
 def load_roi(roi_path):
     """Load ROIs from path or CSV.
@@ -93,10 +94,14 @@ class NiftiMasker:
         """
         Parameters
         ----------
-        mask_img (Niimg-like object): File path to brain mask Nifti file.
+        mask_img : Niimg-like object
+            If string, consider it as a path to NIfTI image and call 
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
+            folder. If it is an object, check if affine attribute is present, 
+            raise `TypeError` otherwise.
 
         """
-        self.mask_img = image.load_img(mask_img)
+        self.mask_img = check_niimg(mask_img)
         mask_data = self.mask_img.get_fdata()
         self.mask_idx, = np.where(mask_data.flatten())
         self.mask_shape = mask_data.shape
@@ -106,8 +111,11 @@ class NiftiMasker:
         """Masks 3D Nifti file into 1D array.
         Parameters
         ----------
-        niimg : nibabel.nifti1.Nifti1Image
-            Nifti to transform. 
+        niimg : Niimg-like object
+            If string, consider it as a path to NIfTI image and call 
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
+            folder. If it is an object, check if affine attribute is present, 
+            raise `TypeError` otherwise. 
 
         Returns
         -------
@@ -115,7 +123,7 @@ class NiftiMasker:
             Masked Nifti file.
         
         """
-        return np.take(image.get_data(niimg).flatten(), self.mask_idx)
+        return np.take(check_niimg(niimg).get_fdata().flatten(), self.mask_idx)
 
     def inverse_transform(self, flat_niimg=None):
         """Unmasks 1D array into 3D Nifti file.
@@ -139,13 +147,16 @@ class NiftiMasker:
         """Masks 3D Nifti file into Masked 3D Nifti file.
         Parameters
         ----------
-        niimg : nibabel.nifti1.Nifti1Image 
-            Nifti to mask.
+        niimg : Niimg-like object
+            If string, consider it as a path to NIfTI image and call 
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
+            folder. If it is an object, check if affine attribute is present, 
+            raise `TypeError` otherwise. 
 
         Returns
         -------
         masked_niimg : nibabel.nifti1.Nifti1Image
             Masked Nifti file.
-            
+
         """
         return self.inverse_transform(self.transform(niimg))
