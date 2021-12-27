@@ -13,11 +13,14 @@ class Config:
                 else:
                     raise OSError(f"Config {self.config['name']} unavailable")
             except FileNotFoundError:
-                raise FileNotFoundError(f"PCC config file {configfile} does not exist!")
+                raise FileNotFoundError(f"PCC config file {configfile} does \
+                                        not exist!")
     
     def check(self):
-        checks = ['avgr', 'fz', 't', 'combo', 'std', 'norm', 'chunk_idx', 'voxel_idx']
-        return all(list(map(os.path.exists, [self.config[key] for key in checks])))
+        checks = ['avgr', 'fz', 't', 'combo', 'std', 'norm', 'chunk_idx', 
+                  'voxel_idx']
+        return all(list(map(os.path.exists, 
+                            [self.config[key] for key in checks])))
 
     def get(self, key):
         return self.config[key]
