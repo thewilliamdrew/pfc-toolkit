@@ -1,6 +1,7 @@
 {
     "name" : "discovery-yeo1000_dil",
     "mask" : "MNI152_T1_2mm_brain_mask_dil",
+    "brain_size" : 292019,
     "avgr" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/AvgR",
     "fz" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/AvgR_Fz",
     "t" : "/Volumes/discovery/precomputed_connectomes/yeo1000_dil_pcc/T",
