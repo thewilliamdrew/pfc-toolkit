@@ -42,6 +42,38 @@ def load_roi(roi_path):
     print(f"Found {len(roi_paths)} ROIs...")
     return roi_paths
 
+def get_chunks(rois, config):
+    """Get list of dicts containing Chunks to load and their associated ROIs
+
+    Parameters
+    ----------
+    rois : list of str
+        List of paths to ROIs to find chunks for.
+    config : Config
+        Configuration object.
+
+    Returns
+    -------
+    dict of dicts
+        Dict of dicts containing Chunk path and list of associated ROI paths.
+
+    """
+    chunk_dict = {}
+    chunk_map = image.load_img(config.get('chunk_idx'))
+    for roi in rois:
+        roi_image = image.load_img(roi)
+        roi_chunks = image.math_img("img * mask", img = roi_image, 
+                                    mask = chunk_map).get_fdata()
+        chunks = np.unique(roi_chunks).astype(int)
+        chunks = chunks[chunks != 0]
+        for chunk in chunks:
+            if chunk in chunk_dict:
+                chunk_dict[chunk].append(roi)
+            else:
+                chunk_dict[chunk] = [roi]
+    return chunk_dict
+
+
 class NiftiMasker:
     """A Faster NiftiMasker.
     Attributes:
