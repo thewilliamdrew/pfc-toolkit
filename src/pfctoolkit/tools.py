@@ -23,21 +23,22 @@ def load_roi(roi_path):
         List of paths to NIfTI image ROIs
     
     """
-    roi_extension = os.path.basename(roi_path).split('.')[1:]
-    if 'csv' in roi_extension:
-        with open(roi_path, newline='') as f:
-            reader = csv.reader(f)
-            data = list(reader)
-        roi_paths = [path for line in data for path in line]
-    elif 'nii' in roi_extension:
-        roi_paths = [roi_path]
-    elif os.path.isdir(roi_path):
-        roi_paths = glob(os.path.abspath(roi_path)+"*.nii*")
+    if os.path.isdir(roi_path):
+        roi_paths = glob(os.path.join(os.path.abspath(roi_path),"*.nii*"))
         if(len(roi_paths) == 0):
             raise FileNotFoundError("No NIfTI images found!")
     else:
-        raise ValueError("Input File is not a NIfTI or a CSV containing paths \
-                          to a list of NIfTIs")
+        roi_extension = os.path.basename(roi_path).split('.')[1:]
+        if 'csv' in roi_extension:
+            with open(roi_path, newline='') as f:
+                reader = csv.reader(f)
+                data = list(reader)
+            roi_paths = [path for line in data for path in line]
+        elif 'nii' in roi_extension:
+            roi_paths = [roi_path]
+        else:
+            raise ValueError("Input File is not a NIfTI or a CSV containing \
+                              paths to a list of NIfTIs")
     print(f"Found {len(roi_paths)} ROIs...")
     return roi_paths
 
