@@ -25,12 +25,14 @@ def process_chunk(chunk, rois, config):
     brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
     chunk_masker = tools.NiftiMasker(image.math_img(f"img=={chunk}", 
                                      img=config.get("chunk_idx")))
-    roi_brain_masks = [brain_masker.transform(roi) for roi in rois]
-    roi_chunk_masks = [chunk_masker.transform(roi) for roi in rois]
+    brain_weights = [brain_masker.transform(roi) for roi in rois]
+    chunk_weights = [chunk_masker.transform(roi) for roi in rois]
+    brain_masks = [(weights != 0) for weights in brain_weights]
+    chunk_masks = [(weights != 0) for weights in chunk_weights]
     norm_weight = chunk_masker.transform(config.get("norm"))
     std_weight = chunk_masker.transform(config.get("std"))
-    norm_weighted_roi_chunk_masks = np.multiply(roi_chunk_masks, norm_weight)
-    std_weighted_roi_chunk_masks = np.multiply(roi_chunk_masks, std_weight)
+    norm_weighted_chunk_masks = np.multiply(chunk_weights, norm_weight)
+    std_weighted_chunk_masks = np.multiply(chunk_weights, std_weight)
     contributions = {}
     for chunk_type in [("avgr", "AvgR"), 
                        ("fz", "AvgR_Fz"), 
@@ -43,13 +45,23 @@ def process_chunk(chunk, rois, config):
                                 config.get('brain_size'))):
             raise TypeError("Chunk expected to have shape {(config.get('chunk_size'), config.get('brain_size'))} but instead has shape {np.shape(chunk_data)}!")
         if(chunk_type[0] == "Combo"):
-            numerator = np.sum(norm_weighted_roi_chunk_masks, axis = 1)
-            
-            denominator = chunk_data
-        else:
-            network_maps = np.matmul(std_weighted_roi_chunk_masks, chunk_data)
-            network_weights = np.sum(std_weighted_roi_chunk_masks, axis = 1)
+            numerator = np.sum(norm_weighted_chunk_masks, axis = 1)
+            denominator = []
+            for i in range(len(rois)):
+                chunk_masked = np.multiply(np.reshape(chunk_weights[i][chunk_masks[i]], 
+                                           (-1,1)), 
+                                           chunk_data[chunk_masks[i],:])
+                brain_masked = np.multiply(brain_weights[i][brain_masks[i]], 
+                                           chunk_masked[:,brain_masks[i]])
+                denominator.append(np.sum(brain_masked))
             contributions[chunk_type[0]] = {
-                "maps" : network_maps,
-                "weights" : network_weights
+                "numerators": numerator,
+                "denominators": denominator
+            }
+        else:
+            network_maps = np.matmul(std_weighted_chunk_masks, chunk_data)
+            network_weights = np.sum(std_weighted_chunk_masks, axis = 1)
+            contributions[chunk_type[0]] = {
+                "maps": network_maps,
+                "weights": network_weights
             }
