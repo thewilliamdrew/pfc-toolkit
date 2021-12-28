@@ -102,12 +102,12 @@ class NiftiMasker:
 
         """
         self.mask_img = check_niimg(mask_img)
-        mask_data = self.mask_img.get_fdata()
-        self.mask_idx, = np.where(mask_data.flatten())
-        self.mask_shape = mask_data.shape
+        self.mask_data = self.mask_img.get_fdata()
+        self.mask_idx, = np.where((self.mask_data != 0).flatten())
+        self.mask_shape = self.mask_data.shape
         self.mask_size = np.prod(self.mask_shape)
 
-    def transform(self, niimg=None):
+    def transform(self, niimg=None, weight=False):
         """Masks 3D Nifti file into 1D array.
         Parameters
         ----------
@@ -116,6 +116,9 @@ class NiftiMasker:
             `nibabel.load()` on it. The '~' symbol is expanded to the user home 
             folder. If it is an object, check if affine attribute is present, 
             raise `TypeError` otherwise. 
+        weight : bool, default False
+            If True, transform the niimg with weighting. If False, transform the
+            niimg without weighting.
 
         Returns
         -------
@@ -123,7 +126,11 @@ class NiftiMasker:
             Masked Nifti file.
         
         """
-        return np.take(check_niimg(niimg).get_fdata().flatten(), self.mask_idx)
+        if weight:
+            img = niimg
+        else:
+            img = np.multiply(self.mask_data, niimg)
+        return np.take(img.flatten(), self.mask_idx)
 
     def inverse_transform(self, flat_niimg=None):
         """Unmasks 1D array into 3D Nifti file.
