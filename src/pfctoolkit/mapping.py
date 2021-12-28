@@ -18,7 +18,8 @@ def process_chunk(chunk, rois, config):
 
     Returns
     -------
-    
+    contributions : dict of ndarray
+        Dictionary containing contributions to network maps.
 
     """
     brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
@@ -26,6 +27,11 @@ def process_chunk(chunk, rois, config):
                                      img=config.get("chunk_idx")))
     roi_brain_masks = [brain_masker.transform(roi) for roi in rois]
     roi_chunk_masks = [chunk_masker.transform(roi) for roi in rois]
+    norm_weight = chunk_masker.transform(config.get("norm"))
+    std_weight = chunk_masker.transform(config.get("std"))
+    norm_weighted_roi_chunk_masks = np.multiply(roi_chunk_masks, norm_weight)
+    std_weighted_roi_chunk_masks = np.multiply(roi_chunk_masks, std_weight)
+    contributions = {}
     for chunk_type in [("avgr", "AvgR"), 
                        ("fz", "AvgR_Fz"), 
                        ("t", "T"), 
@@ -36,5 +42,14 @@ def process_chunk(chunk, rois, config):
         if(chunk_data.shape != (config.get('chunk_size'), 
                                 config.get('brain_size'))):
             raise TypeError("Chunk expected to have shape {(config.get('chunk_size'), config.get('brain_size'))} but instead has shape {np.shape(chunk_data)}!")
-        
-        
+        if(chunk_type[0] == "Combo"):
+            numerator = np.sum(norm_weighted_roi_chunk_masks, axis = 1)
+            
+            denominator = chunk_data
+        else:
+            network_maps = np.matmul(std_weighted_roi_chunk_masks, chunk_data)
+            network_weights = np.sum(std_weighted_roi_chunk_masks, axis = 1)
+            contributions[chunk_type[0]] = {
+                "maps" : network_maps,
+                "weights" : network_weights
+            }
