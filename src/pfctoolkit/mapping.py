@@ -15,6 +15,8 @@ def process_chunk(chunk, rois, config):
         Index of chunk to be processed.
     rois : list of str
         List of ROI paths to be processed with the chunk.
+    config : pfctoolkit.config.Config
+        Config object containing precomputed connectome configuration.
 
     Returns
     -------
@@ -44,24 +46,63 @@ def process_chunk(chunk, rois, config):
         if(chunk_data.shape != (config.get('chunk_size'), 
                                 config.get('brain_size'))):
             raise TypeError("Chunk expected to have shape {(config.get('chunk_size'), config.get('brain_size'))} but instead has shape {np.shape(chunk_data)}!")
-        if(chunk_type[0] == "Combo"):
+        if(chunk_type[0] == "combo"):
             numerator = np.sum(norm_weighted_chunk_masks, axis = 1)
-            denominator = []
-            for i in range(len(rois)):
+            for i, roi in enumerate(rois):
                 chunk_masked = np.multiply(np.reshape(chunk_weights[i][chunk_masks[i]], 
                                            (-1,1)), 
                                            chunk_data[chunk_masks[i],:])
                 brain_masked = np.multiply(brain_weights[i][brain_masks[i]], 
                                            chunk_masked[:,brain_masks[i]])
-                denominator.append(np.sum(brain_masked))
-            contributions[chunk_type[0]] = {
-                "numerators": numerator,
-                "denominators": denominator
-            }
+                denominator = np.sum(brain_masked)
+                contributions[roi]["numerator"] = numerator[i]
+                contributions[roi]["denominator"] = denominator
         else:
             network_maps = np.matmul(std_weighted_chunk_masks, chunk_data)
-            network_weights = np.sum(std_weighted_chunk_masks, axis = 1)
-            contributions[chunk_type[0]] = {
-                "maps": network_maps,
-                "weights": network_weights
+            for i, roi in enumerate(rois):
+                if(chunk_type[0] == "avgr"):
+                    contributions[roi] = {
+                        chunk_type[0]: network_maps[i,:],
+                    }
+                else:
+                    contributions[roi][chunk_type[0]] = network_maps[i,:]
+        network_weights = np.sum(std_weighted_chunk_masks, axis = 1)
+        for i, roi in enumerate(rois):
+            contributions[roi]["network_weight"] = network_weights[i]
+    return contributions
+
+def consolidate(contribution, atlas):
+    """Consolidate chunk contributions into running in-progress FC map atlas.
+
+    Parameters
+    ----------
+    contribution : dict
+        dict containing FC and scaling factor contributions from a chunk.
+    atlas : dict
+        dict containing in-progress FC maps and scaling factor accumulators.
+
+    Returns
+    -------
+    atlas : dict
+        Updated dict containing in-progress FC maps and scaling factor
+        accumulators following consolidation of the contribution.
+
+    """
+    for roi in contribution.keys():
+        if roi in atlas:
+            atlas[roi]["avgr"] += contribution[roi]["avgr"]
+            atlas[roi]["fz"] += contribution[roi]["fz"]
+            atlas[roi]["t"] += contribution[roi]["t"]
+            atlas[roi]["network_weight"] += contribution[roi]["network_weight"]
+            atlas[roi]["numerator"] += contribution[roi]["numerator"]
+            atlas[roi]["denominator"] += contribution[roi]["denominator"]
+        else:
+            atlas[roi] = {
+                "avgr": contribution[roi]["avgr"],
+                "fz": contribution[roi]["fz"],
+                "t": contribution[roi]["t"],
+                "network_weight": contribution[roi]["network_weight"],
+                "numerator": contribution[roi]["numerator"],
+                "denominator": contribution[roi]["denominator"],
             }
+    return atlas
