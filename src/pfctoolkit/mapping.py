@@ -99,7 +99,7 @@ def compute_network_weights(std_chunk_masks):
     -------
     network_weights : ndarray
         Contribution to total network map weights.
-        
+
     """
     network_weights = np.sum(std_chunk_masks, axis = 1)
     return network_weights
@@ -121,7 +121,8 @@ def compute_network_maps(std_chunk_masks, chunk_data):
         Network map contributions from chunk.
 
     """
-    network_maps = np.matmul(std_chunk_masks, chunk_data)
+    # network_maps = np.matmul(std_chunk_masks, chunk_data)
+    network_maps = np.dot(std_chunk_masks, chunk_data)
     return network_maps
 
 @jit(nopython=True)
@@ -205,8 +206,8 @@ def compute_chunk_masks(chunk_weights, norm_weight, std_weight):
     std_weighted_chunk_masks = np.multiply(chunk_weights, std_weight)
     return norm_weighted_chunk_masks,std_weighted_chunk_masks
 
-def consolidate(contribution, atlas):
-    """Consolidate chunk contributions into running in-progress FC map atlas.
+def update_atlas(contribution, atlas):
+    """Update atlas with chunk contributions.
 
     Parameters
     ----------
@@ -240,3 +241,36 @@ def consolidate(contribution, atlas):
                 "denominator": contribution[roi]["denominator"],
             }
     return atlas
+
+def publish_atlas(atlas, output_dir, config):
+    """Runs final computation on the atlas and outputs network maps to file.
+
+    Parameters
+    ----------
+    atlas : dict
+        dict containing in-progress FC maps and scaling factor accumulators.
+    output_dir : str
+        Output directory.
+    config : pfctoolkit.config.Config
+        Configuration of the precomputed connectome.
+
+    """
+    brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+    for roi in atlas:
+        atlas[roi]["denominator"] = final_denominator(atlas[roi]["denominator"])
+        atlas[roi]["avgr"] = atlas[roi]["avgr"]/atlas[roi]["network_weight"]
+        atlas[roi]["fz"] = atlas[roi]["fz"]/atlas[roi]["network_weight"]
+        atlas[roi]["t"] = atlas[roi]["t"]/atlas[roi]["network_weight"]
+        scaling_factor = atlas[roi]["numerator"]/atlas[roi]["denominator"]
+        subject_name = os.path.basename(roi).split('.nii')[0]
+        for map_type in [("avgr", "AvgR"),
+                         ("fz", "AvgR_Fz"),
+                         ("t", "T")
+                        ]:
+            output_fname = os.path.join(output_dir, f"{subject_name}_Precom_{map_type[1]}.nii.gz")
+            brain_masker.inverse_transform(atlas[roi][map_type[0]]).to_filename(output_fname)
+
+
+@jit(nopython=True)
+def final_denominator(denominator):
+    return np.sqrt(denominator)
