@@ -23,7 +23,7 @@ class Config:
                                          "not exist!")
     
     def check(self):
-        checks = ['avgr','fz','t','combo','std','norm','chunk_idx','voxel_idx']
+        checks = ['avgr','fz','t','combo','std','norm','chunk_idx']
         return all(list(map(os.path.exists, 
                             [self.config[key] for key in checks])))
 
