@@ -102,13 +102,13 @@ class NiftiMasker:
 
         """
         self.mask_img = check_niimg(mask_img)
-        self.mask_data = self.mask_img.get_fdata()
+        self.mask_data = self.mask_img.get_fdata().astype(np.float32)
         self.mask_idx, = np.where((self.mask_data != 0).flatten())
         self.mask_shape = self.mask_data.shape
         self.mask_size = np.prod(self.mask_shape)
 
     def transform(self, niimg=None, weight=False):
-        """Masks 3D Nifti file into 1D array.
+        """Masks 3D Nifti file into 1D array. Retypes to float32
         Parameters
         ----------
         niimg : Niimg-like object
@@ -126,14 +126,15 @@ class NiftiMasker:
             Masked Nifti file.
         
         """
+        niimg = check_niimg(niimg).get_fdata().astype(np.float32)
         if weight:
-            img = np.multiply(self.mask_data, check_niimg(niimg).get_fdata())
+            img = np.multiply(self.mask_data, niimg)
         else:
-            img = check_niimg(niimg).get_fdata()
+            img = niimg
         return np.take(img.flatten(), self.mask_idx)
 
     def inverse_transform(self, flat_niimg=None):
-        """Unmasks 1D array into 3D Nifti file.
+        """Unmasks 1D array into 3D Nifti file. Retypes to float32.
         Parameters
         ----------
         flat_niimg : numpy.ndarray
@@ -145,8 +146,8 @@ class NiftiMasker:
             Unmasked Nifti.
 
         """
-        new_img = np.zeros(self.mask_size)
-        new_img[self.mask_idx] = flat_niimg
+        new_img = np.zeros(self.mask_size, dtype=np.float32)
+        new_img[self.mask_idx] = flat_niimg.astype(np.float32)
         return image.new_img_like(self.mask_img, 
                                   new_img.reshape(self.mask_shape))
 
