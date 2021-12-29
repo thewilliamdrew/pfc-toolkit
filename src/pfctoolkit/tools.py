@@ -127,9 +127,9 @@ class NiftiMasker:
         
         """
         if weight:
-            img = niimg
+            img = np.multiply(self.mask_data, check_niimg(niimg).get_fdata())
         else:
-            img = np.multiply(self.mask_data, niimg)
+            img = check_niimg(niimg).get_fdata()
         return np.take(img.flatten(), self.mask_idx)
 
     def inverse_transform(self, flat_niimg=None):
