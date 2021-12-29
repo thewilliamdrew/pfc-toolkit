@@ -258,7 +258,7 @@ def publish_atlas(atlas, output_dir, config):
                          ("t", "T")
                         ]:
             output_fname = os.path.join(output_dir, f"{subject_name}_Precom_{map_type[1]}.nii.gz")
-            brain_masker.inverse_transform(atlas[roi][map_type[0]]).to_filename(output_fname)
+            brain_masker.inverse_transform(atlas[roi][map_type[0]]*scaling_factor).to_filename(output_fname)
 
 
 @jit(nopython=True)
