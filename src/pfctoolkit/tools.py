@@ -1,9 +1,12 @@
-# Tools, Functions, and Classes for working with the Precomputed Connectome
-# Author: William Drew <wdrew@bwh.harvard.edu>
+"""
+Useful utilities for working with the Precomputed Connectome
+
+"""
 
 import os
 import csv
 import numpy as np
+from tqdm import tqdm
 from glob import glob
 from nilearn import image
 from nilearn._utils import check_niimg
@@ -38,8 +41,8 @@ def load_roi(roi_path):
         elif 'nii' in roi_extension:
             roi_paths = [roi_path]
         else:
-            raise ValueError("Input File is not a NIfTI or a CSV containing \
-                              paths to a list of NIfTIs")
+            raise ValueError("Input File is not a NIfTI or a CSV containing "
+                             "paths to a list of NIfTIs")
     print(f"Found {len(roi_paths)} ROIs...")
     return roi_paths
 
@@ -61,7 +64,7 @@ def get_chunks(rois, config):
     """
     chunk_dict = {}
     chunk_map = image.load_img(config.get('chunk_idx'))
-    for roi in rois:
+    for roi in tqdm(rois):
         roi_image = image.load_img(roi)
         roi_chunks = image.math_img("img * mask", img = roi_image, 
                                     mask = chunk_map).get_fdata()
@@ -156,10 +159,10 @@ class NiftiMasker:
         Parameters
         ----------
         niimg : Niimg-like object
-            If string, consider it as a path to NIfTI image and call 
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
-            folder. If it is an object, check if affine attribute is present, 
-            raise `TypeError` otherwise. 
+            If string, consider it as a path to NIfTI image and call
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home
+            folder. If it is an object, check if affine attribute is present,
+            raise `TypeError` otherwise.
 
         Returns
         -------

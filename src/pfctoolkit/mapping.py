@@ -1,5 +1,7 @@
-# Tools to perform Lesion Network Mapping with the Precomputed Connectome
-# William Drew 2021 (wdrew@bwh.harvard.edu)
+"""
+Tools to perform Lesion Network Mapping with the Precomputed Connectome
+
+"""
 
 import os
 import numpy as np
@@ -52,9 +54,10 @@ def process_chunk(chunk, rois, config):
                       ]:
         chunk_data = np.load(os.path.join(chunk_paths[chunk_type[0]], 
                                           f"{chunk}_{chunk_type[1]}.npy"))
-        if(chunk_data.shape != (config.get("chunk_size"), 
-                                config.get("brain_size"))):
-            raise TypeError("Chunk expected to have shape {(config.get('chunk_size'), config.get('brain_size'))} but instead has shape {np.shape(chunk_data)}!")
+        expected_shape = (config.get("chunk_size"), config.get("brain_size"))
+        if(chunk_data.shape != expected_shape):
+            raise TypeError(f"Chunk expected to have shape {expected_shape} but"
+                            f" instead has shape {chunk_data.shape}!")
         if(chunk_type[0] == "combo"):
             numerator = compute_numerator(norm_chunk_masks)
             for i, roi in enumerate(rois):
@@ -76,6 +79,77 @@ def process_chunk(chunk, rois, config):
     for i, roi in enumerate(rois):
         contributions[roi]["network_weight"] = network_weights[i]
     return contributions
+
+def update_atlas(contribution, atlas):
+    """Update atlas with chunk contributions.
+
+    Parameters
+    ----------
+    contribution : dict
+        dict containing FC and scaling factor contributions from a chunk.
+    atlas : dict
+        dict containing in-progress FC maps and scaling factor accumulators.
+
+    Returns
+    -------
+    atlas : dict
+        Updated dict containing in-progress FC maps and scaling factor
+        accumulators following consolidation of the contribution.
+
+    """
+    for roi in contribution.keys():
+        if roi in atlas:
+            atlas[roi]["avgr"] += contribution[roi]["avgr"]
+            atlas[roi]["fz"] += contribution[roi]["fz"]
+            atlas[roi]["t"] += contribution[roi]["t"]
+            atlas[roi]["network_weight"] += contribution[roi]["network_weight"]
+            atlas[roi]["numerator"] += contribution[roi]["numerator"]
+            atlas[roi]["denominator"] += contribution[roi]["denominator"]
+        else:
+            atlas[roi] = {
+                "avgr": contribution[roi]["avgr"],
+                "fz": contribution[roi]["fz"],
+                "t": contribution[roi]["t"],
+                "network_weight": contribution[roi]["network_weight"],
+                "numerator": contribution[roi]["numerator"],
+                "denominator": contribution[roi]["denominator"],
+            }
+    return atlas
+
+def publish_atlas(atlas, output_dir, config):
+    """Runs final computation on the atlas and outputs network maps to file.
+
+    Parameters
+    ----------
+    atlas : dict
+        dict containing in-progress FC maps and scaling factor accumulators.
+    output_dir : str
+        Output directory.
+    config : pfctoolkit.config.Config
+        Configuration of the precomputed connectome.
+
+    """
+    output_dir = os.path.abspath(output_dir)
+    brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+    for roi in atlas:
+        atlas[roi]["denominator"] = final_denominator(atlas[roi]["denominator"])
+        atlas[roi]["avgr"] = atlas[roi]["avgr"]/atlas[roi]["network_weight"]
+        atlas[roi]["fz"] = atlas[roi]["fz"]/atlas[roi]["network_weight"]
+        atlas[roi]["t"] = atlas[roi]["t"]/atlas[roi]["network_weight"]
+        scaling_factor = atlas[roi]["numerator"]/atlas[roi]["denominator"]
+        subject_name = os.path.basename(roi).split('.nii')[0]
+        for map_type in [("avgr","AvgR"),("fz","AvgR_Fz"),("t","T")]:
+            output_fname = f"{subject_name}_Precom_{map_type[1]}.nii.gz"
+            output_path = os.path.join(output_dir, output_fname)
+            atlas[roi][map_type[0]] = atlas[roi][map_type[0]]*scaling_factor
+            out_img = brain_masker.inverse_transform(atlas[roi][map_type[0]])
+            out_img.to_filename(output_path)
+    print(f"Network maps output to {output_dir}")
+    print("Done!")
+
+@jit(nopython=True)
+def final_denominator(denominator):
+    return np.sqrt(denominator)
 
 @jit(nopython=True)
 def compute_network_weights(std_chunk_masks):
@@ -195,72 +269,3 @@ def compute_chunk_masks(chunk_weights, norm_weight, std_weight):
     norm_weighted_chunk_masks = np.multiply(chunk_weights, norm_weight)
     std_weighted_chunk_masks = np.multiply(chunk_weights, std_weight)
     return norm_weighted_chunk_masks,std_weighted_chunk_masks
-
-def update_atlas(contribution, atlas):
-    """Update atlas with chunk contributions.
-
-    Parameters
-    ----------
-    contribution : dict
-        dict containing FC and scaling factor contributions from a chunk.
-    atlas : dict
-        dict containing in-progress FC maps and scaling factor accumulators.
-
-    Returns
-    -------
-    atlas : dict
-        Updated dict containing in-progress FC maps and scaling factor
-        accumulators following consolidation of the contribution.
-
-    """
-    for roi in contribution.keys():
-        if roi in atlas:
-            atlas[roi]["avgr"] += contribution[roi]["avgr"]
-            atlas[roi]["fz"] += contribution[roi]["fz"]
-            atlas[roi]["t"] += contribution[roi]["t"]
-            atlas[roi]["network_weight"] += contribution[roi]["network_weight"]
-            atlas[roi]["numerator"] += contribution[roi]["numerator"]
-            atlas[roi]["denominator"] += contribution[roi]["denominator"]
-        else:
-            atlas[roi] = {
-                "avgr": contribution[roi]["avgr"],
-                "fz": contribution[roi]["fz"],
-                "t": contribution[roi]["t"],
-                "network_weight": contribution[roi]["network_weight"],
-                "numerator": contribution[roi]["numerator"],
-                "denominator": contribution[roi]["denominator"],
-            }
-    return atlas
-
-def publish_atlas(atlas, output_dir, config):
-    """Runs final computation on the atlas and outputs network maps to file.
-
-    Parameters
-    ----------
-    atlas : dict
-        dict containing in-progress FC maps and scaling factor accumulators.
-    output_dir : str
-        Output directory.
-    config : pfctoolkit.config.Config
-        Configuration of the precomputed connectome.
-
-    """
-    brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
-    for roi in atlas:
-        atlas[roi]["denominator"] = final_denominator(atlas[roi]["denominator"])
-        atlas[roi]["avgr"] = atlas[roi]["avgr"]/atlas[roi]["network_weight"]
-        atlas[roi]["fz"] = atlas[roi]["fz"]/atlas[roi]["network_weight"]
-        atlas[roi]["t"] = atlas[roi]["t"]/atlas[roi]["network_weight"]
-        scaling_factor = atlas[roi]["numerator"]/atlas[roi]["denominator"]
-        subject_name = os.path.basename(roi).split('.nii')[0]
-        for map_type in [("avgr", "AvgR"),
-                         ("fz", "AvgR_Fz"),
-                         ("t", "T")
-                        ]:
-            output_fname = os.path.join(output_dir, f"{subject_name}_Precom_{map_type[1]}.nii.gz")
-            brain_masker.inverse_transform(atlas[roi][map_type[0]]*scaling_factor).to_filename(output_fname)
-
-
-@jit(nopython=True)
-def final_denominator(denominator):
-    return np.sqrt(denominator)
