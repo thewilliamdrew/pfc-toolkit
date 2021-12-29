@@ -1,7 +1,7 @@
 # Tools to perform Lesion Network Mapping with the Precomputed Connectome
 # William Drew 2021 (wdrew@bwh.harvard.edu)
 
-import os, time
+import os
 import numpy as np
 from numba import jit
 from nilearn import image
@@ -50,30 +50,21 @@ def process_chunk(chunk, rois, config):
                        ("t", "T"), 
                        ("combo", "Combo"),
                       ]:
-        start_time = time.time()
         chunk_data = np.load(os.path.join(chunk_paths[chunk_type[0]], 
                                           f"{chunk}_{chunk_type[1]}.npy"))
-        end_time = time.time()
-        print("--- %s seconds : Load chunk ---" % (end_time - start_time))
         if(chunk_data.shape != (config.get("chunk_size"), 
                                 config.get("brain_size"))):
             raise TypeError("Chunk expected to have shape {(config.get('chunk_size'), config.get('brain_size'))} but instead has shape {np.shape(chunk_data)}!")
         if(chunk_type[0] == "combo"):
             numerator = compute_numerator(norm_chunk_masks)
-            start_time = time.time()
             for i, roi in enumerate(rois):
                 denominator = compute_denominator(brain_weights, chunk_weights, 
                                                   brain_masks, chunk_masks, 
                                                   chunk_data, i)
                 contributions[roi]["numerator"] = numerator[i]
                 contributions[roi]["denominator"] = denominator
-            end_time = time.time()
-            print("--- %s seconds : Combo loop ---" % (end_time - start_time))
         else:
-            start_time = time.time()
             network_maps = compute_network_maps(std_chunk_masks, chunk_data)
-            end_time = time.time()
-            print("--- %s seconds : Compute network maps ---" % (end_time - start_time))
             for i, roi in enumerate(rois):
                 if(chunk_type[0] == "avgr"):
                     contributions[roi] = {
@@ -121,7 +112,6 @@ def compute_network_maps(std_chunk_masks, chunk_data):
         Network map contributions from chunk.
 
     """
-    # network_maps = np.matmul(std_chunk_masks, chunk_data)
     network_maps = np.dot(std_chunk_masks, chunk_data)
     return network_maps
 
