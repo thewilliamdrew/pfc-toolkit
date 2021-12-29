@@ -3,7 +3,8 @@ Configuration objects to facilitate using the Precomputed Connectome.
 
 """
 
-import os, json
+import os
+import json
 import importlib.resources as pkg_resources
 
 class Config:

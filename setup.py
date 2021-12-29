@@ -32,13 +32,12 @@ setuptools.setup(
     },
     install_requires=[
         "tqdm",
+        "glob",
         "numba",
         "numpy",
-        "pandas",
-        "h5py",
         "nilearn",
         "natsort",
-        "fslpy"
+        "importlib",
     ],
     python_requires=">=3.6",
 )
