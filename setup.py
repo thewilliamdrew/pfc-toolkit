@@ -35,6 +35,7 @@ setuptools.setup(
         "glob",
         "numba",
         "numpy",
+        "scipy",
         "nilearn",
         "natsort",
         "importlib",
