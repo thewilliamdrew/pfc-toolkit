@@ -66,12 +66,12 @@ def get_extrema(radius_len, home_coords, XMAX, YMAX, ZMAX):
         X/Y/Z coordinate boundaries of search region.
 
     """
-    xMin = np.max(home_coords[0]-radius_len, 0)
-    xMax = np.min(home_coords[0]+radius_len, XMAX-1)
-    yMin = np.max(home_coords[1]-radius_len, 0)
-    yMax = np.min(home_coords[1]+radius_len, YMAX-1)
-    zMin = np.max(home_coords[2]-radius_len, 0)
-    zMax = np.min(home_coords[2]+radius_len, ZMAX-1)
+    xMin = np.max([home_coords[0]-radius_len, 0])
+    xMax = np.min([home_coords[0]+radius_len, XMAX-1])
+    yMin = np.max([home_coords[1]-radius_len, 0])
+    yMax = np.min([home_coords[1]+radius_len, YMAX-1])
+    zMin = np.max([home_coords[2]-radius_len, 0])
+    zMax = np.min([home_coords[2]+radius_len, ZMAX-1])
     return xMin, xMax, yMin, yMax, zMin, zMax
 
 def label_chunk(radius_len,
@@ -128,7 +128,11 @@ def label_chunk(radius_len,
     search_area = (search_area == -1)
     # Check if there are enough unassigned voxels to fill a chunk
     if(np.sum(search_area)<(chunk_size-1)):
-        label_chunk(radius_len+1, home_coords, voxel_maps, chunk_label)
+        label_chunk(radius_len+1, home_coords, voxel_maps, chunk_label,
+                                                           chunk_size,
+                                                           XMAX,
+                                                           YMAX,
+                                                           ZMAX)
     else:
         # Get coords of unassigned voxels in search area
         locations = get_locations(search_area)
@@ -196,7 +200,6 @@ def generate_chunk_mask(mask, num_chunks, chunk_size, out_dir, radius = 20):
         Radius to search for unassigned voxels, by default 20.
 
     """
-    mask = check_niimg(mask)
     XMAX,YMAX,ZMAX = mask.shape
     voxel_map = mask.get_fdata().astype(int).copy() * -1
     for i in trange(num_chunks):
