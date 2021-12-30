@@ -32,7 +32,6 @@ setuptools.setup(
     },
     install_requires=[
         "tqdm",
-        "glob",
         "numba",
         "numpy",
         "scipy",
