@@ -31,7 +31,7 @@ def extract_chunk_signals(connectome_mat, roi_mat):
 
 # def make_fz_maps(connectome_files, roi_mat, result_queue):
 def make_fz_maps(connectome_files, roi_mat):
-    """Make Fz Maps for a chunk ROI and a connctome subject.
+    """Make Fz Maps for a chunk ROI and a connectome subject.
 
     Parameters
     ----------
