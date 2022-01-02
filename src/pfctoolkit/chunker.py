@@ -7,7 +7,6 @@ import os
 import numpy as np
 from tqdm import trange
 from nilearn import image
-from nilearn._utils import check_niimg
 from scipy.spatial.distance import cityblock
 
 def get_distances(home_coords, locations):
