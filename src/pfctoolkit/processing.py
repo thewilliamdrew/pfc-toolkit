@@ -55,15 +55,16 @@ def make_fz_maps(connectome_files, roi_mat, result_queue):
         fz[:,i][np.isinf(fz[:,i])] = finite_max
     result_queue.put(fz)
 
-def welford_update_map(existingAggregateMap, newMap):
+def welford_update_map(count, existingAggregateMap, newMap):
     """Update a Welford map with data from a new map. See
     https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 
     Parameters
     ----------
-    existingAggregateMap : ndarray, shape (<brain size>, <ROI size>, 3)
+    count : int
+        Welford counter.
+    existingAggregateMap : ndarray, shape (<brain size>, <ROI size>, 2)
         An existing Welford map.
-        
     newMap : ndarray, shape (<brain size>, <ROI size>)
         New data to incorporate into a Welford map.
         
@@ -74,22 +75,23 @@ def welford_update_map(existingAggregateMap, newMap):
         Updated Welford map.
 
     """
-    count = existingAggregateMap[:,:,0]
-    mean = existingAggregateMap[:,:,1]
-    M2 = existingAggregateMap[:,:,2]
+    mean = existingAggregateMap[:,:,0]
+    M2 = existingAggregateMap[:,:,1]
     count += 1
     delta = np.subtract(newMap, mean)
     mean += np.divide(delta, count)
     delta2 = np.subtract(newMap, mean)
     M2 += np.multiply(delta, delta2)
-    return np.stack([count, mean, M2], axis=2)
+    return count, np.stack([mean, M2], axis=2)
 
-def welford_finalize_map(existingAggregateMap):
+def welford_finalize_map(count, existingAggregateMap):
     """Convert a Welford map into maps of arrays containing the statistics 
     [mean, variance, sampleVariancce].
 
     Parameters
     ----------
+    count : int
+        Welford counter.
     existingAggregateMap : ndarray
         Map of Welford tuples.
 
@@ -99,9 +101,8 @@ def welford_finalize_map(existingAggregateMap):
         Array of Welford means, variances, and sample variances.
 
     """
-    count = existingAggregateMap[:,:,0]
-    mean = existingAggregateMap[:,:,1]
-    M2 = existingAggregateMap[:,:,2]
+    mean = existingAggregateMap[:,:,0]
+    M2 = existingAggregateMap[:,:,1]
     variance = np.divide(M2, count)
     sampleVariance = np.divide(M2, count - 1)
     return np.stack([mean, variance, sampleVariance], axis=2)
