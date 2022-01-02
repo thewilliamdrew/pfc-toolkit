@@ -34,7 +34,7 @@ def process_chunk(chunk, rois, config):
         "combo": config.get("combo")
     }
     brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
-    chunk_masker = tools.NiftiMasker(image.math_img(f"img=={chunk}", 
+    chunk_masker = tools.NiftiMasker(image.math_img(f"img=={chunk}",
                                      img=config.get("chunk_idx")))
     brain_weights = np.array([brain_masker.transform(roi) for roi in rois])
     chunk_weights = np.array([chunk_masker.transform(roi) for roi in rois])
@@ -43,13 +43,13 @@ def process_chunk(chunk, rois, config):
     norm_weight = chunk_masker.transform(config.get("norm"))
     std_weight = chunk_masker.transform(config.get("std"))
 
-    norm_chunk_masks, std_chunk_masks = compute_chunk_masks(chunk_weights, 
-                                                            norm_weight, 
+    norm_chunk_masks, std_chunk_masks = compute_chunk_masks(chunk_weights,
+                                                            norm_weight,
                                                             std_weight)
     contributions = {}
-    for chunk_type in [("avgr", "AvgR"), 
-                       ("fz", "AvgR_Fz"), 
-                       ("t", "T"), 
+    for chunk_type in [("avgr", "AvgR"),
+                       ("fz", "AvgR_Fz"),
+                       ("t", "T"),
                        ("combo", "Combo"),
                       ]:
         chunk_data = np.load(os.path.join(chunk_paths[chunk_type[0]], 
@@ -190,11 +190,11 @@ def compute_network_maps(std_chunk_masks, chunk_data):
     return network_maps
 
 @jit(nopython=True)
-def compute_denominator(brain_weights, 
-                        chunk_weights, 
-                        brain_masks, 
-                        chunk_masks, 
-                        chunk_data, 
+def compute_denominator(brain_weights,
+                        chunk_weights,
+                        brain_masks,
+                        chunk_masks,
+                        chunk_data,
                         i
                         ):
     """Compute denominator contribution.
@@ -220,9 +220,9 @@ def compute_denominator(brain_weights,
         Contribution to denominator.
 
     """
-    chunk_masked = np.multiply(np.reshape(chunk_weights[i][chunk_masks[i]], 
+    chunk_masked = np.multiply(np.reshape(chunk_weights[i][chunk_masks[i]],
                                           (-1,1)), chunk_data[chunk_masks[i],:])
-    brain_masked = np.multiply(brain_weights[i][brain_masks[i]], 
+    brain_masked = np.multiply(brain_weights[i][brain_masks[i]],
                                chunk_masked[:,brain_masks[i]])
     denominator = np.sum(brain_masked)
     return denominator
