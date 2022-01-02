@@ -2,7 +2,6 @@
 Tools to perform Lesion Network Mapping with the Precomputed Connectome
 
 """
-
 import os
 import numpy as np
 from numba import jit
