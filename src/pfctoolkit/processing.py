@@ -45,32 +45,74 @@ def make_fz_maps(connectome_files, roi_mat):
     """
     connectome_mat = np.load(connectome_files[0]).astype(np.float32)
     connectome_norms_mat = np.load(connectome_files[1]).astype(np.float32)
-
-    fz = calculate_corr(roi_mat, connectome_mat, connectome_norms_mat)
+    chunk_tc = extract_chunk_signals(connectome_mat, roi_mat)
+    corr_num = matmul(connectome_mat.T, chunk_tc)
+    corr_denom = matmul(connectome_norms_mat.reshape(-1,1),
+                        np.linalg.norm(chunk_tc, axis=0).reshape(1,-1))
+    np.seterr(invalid='ignore')
+    corr = divide(corr_num, corr_denom)
+    corr[np.isnan(corr)] = 0
+    fz = arctanh(corr)
+    # Fix infinite values in the case of single voxel autocorrelations
+    finite_max = np.amax(np.ma.masked_invalid(fz), 1).data
+    while(np.isinf(np.sum(fz))):
+        fz[range(fz.shape[0]), np.argmax(fz, axis=1)] = finite_max
     # result_queue.put(fz)
     return fz
 
 @jit(nopython=True)
-def calculate_corr(roi_mat, connectome_mat, connectome_norms_mat):
-    chunk_tc = extract_chunk_signals(connectome_mat, roi_mat)
-    start = time.time()
-    print(f"Calculating corr_num")
-    corr_num = np.matmul(connectome_mat.T, chunk_tc)
-    print(f"Calculated corr_num in {time.time()-start} seconds")
-    start = time.time()
-    print(f"Calculating corr_denom")
-    corr_denom = np.matmul(connectome_norms_mat.reshape(-1,1),
-                           np.linalg.norm(chunk_tc, axis=0).reshape(1,-1))
-    print(f"Calculated corr_denom in {time.time()-start} seconds")
-    np.seterr(invalid='ignore')
-    corr = np.divide(corr_num, corr_denom)
-    corr[np.isnan(corr)] = 0
-    fz = np.arctanh(corr)
-    # # Fix infinite values in the case of single voxel autocorrelations
-    for i in range(fz.shape[1]):
-        finite_max = fz[:,i][np.isfinite(fz[:,i])].max()
-        fz[:,i][np.isinf(fz[:,i])] = finite_max
-    return fz
+def matmul(a, b):
+    """Numba wrapped np.matmul.
+
+    Parameters
+    ----------
+    a : ndarray
+        Matrix to multiply.
+    b : ndarray
+        Matrix to multiply.
+
+    Returns
+    -------
+    ndarray
+        Matrix product.
+    """
+    return np.dot(a,b)
+
+@jit(nopython=True)
+def divide(a, b):
+    """Numba wrapped np.divide
+
+    Parameters
+    ----------
+    a : ndarray
+        Matrix as numerator.
+    b : ndarray
+        Matrix as denominator.
+
+    Returns
+    -------
+    ndarray
+        Element-wise quotient.
+
+    """
+    return np.divide(a, b)
+
+@jit(nopython=True)
+def arctanh(a):
+    """Numba wrapped np.arctanh
+
+    Parameters
+    ----------
+    a : ndarray
+        Matrix as input.
+
+    Returns
+    -------
+    ndarray
+        Element-wise arctanh.
+
+    """
+    return np.arctanh(a)
 
 @jit(nopython=True)
 def welford_update_map(count, existingAggregateMap, newMap):
