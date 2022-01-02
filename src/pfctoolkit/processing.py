@@ -4,6 +4,7 @@ Tools to generate a Precomputed Functional Connectome.
 """
 
 import numpy as np
+import multiprocessing as mp
 
 def extract_chunk_signals(connectome_mat, roi_mat):
     """Extract Chunk TC Signal from a connectome subject.
@@ -24,7 +25,7 @@ def extract_chunk_signals(connectome_mat, roi_mat):
     roi_masked_tc = connectome_mat[:, roi_mat > 0]
     return roi_masked_tc
 
-def make_fz_maps(connectome_files, roi_mat):
+def make_fz_maps(connectome_files, roi_mat, result_queue):
     """Make Fz Maps for a chunk ROI and a connctome subject.
 
     Parameters
@@ -33,11 +34,8 @@ def make_fz_maps(connectome_files, roi_mat):
         Tuple of paths for connectome subject TC matrix and TC norm vector.
     roi_mat : ndarray
         Brain-masked binary chunk ROI with shape (<size of brain>,)
-
-    Returns
-    -------
-    fz : ndarray
-        Fz maps for chunk ROI with shape (<size of brain>, <size of ROI>)
+    result_queue : mp.Queue
+        Queue to push result maps to.
         
     """
     connectome_mat = np.load(connectome_files[0]).astype(np.float32)
@@ -45,18 +43,68 @@ def make_fz_maps(connectome_files, roi_mat):
 
     chunk_tc = extract_chunk_signals(connectome_mat, roi_mat)
     corr_num = np.matmul(connectome_mat.T, chunk_tc)
-    corr_denom = np.matmul(connectome_norms_mat.reshape(-1,1),np.linalg.norm(chunk_tc, axis=0).reshape(1,-1))
+    corr_denom = np.matmul(connectome_norms_mat.reshape(-1,1),
+                           np.linalg.norm(chunk_tc, axis=0).reshape(1,-1))
     np.seterr(invalid='ignore')
     corr = np.divide(corr_num, corr_denom)
     corr[np.isnan(corr)] = 0
-
     fz = np.arctanh(corr)
     # # Fix infinite values in the case of single voxel autocorrelations
     for i in range(fz.shape[1]):
         finite_max = fz[:,i][np.isfinite(fz[:,i])].max()
         fz[:,i][np.isinf(fz[:,i])] = finite_max
-    return fz
+    result_queue.put(fz)
 
+def welford_update_map(existingAggregateMap, newMap):
+    """Update a Welford map with data from a new map. See
+    https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
+
+    Parameters
+    ----------
+    existingAggregateMap : ndarray, shape (<brain size>, <ROI size>, 3)
+        An existing Welford map.
+        
+    newMap : ndarray, shape (<brain size>, <ROI size>)
+        New data to incorporate into a Welford map.
+        
+
+    Returns
+    -------
+    updatedAggregateMap : ndarray
+        Updated Welford map.
+
+    """
+    count = existingAggregateMap[:,:,0]
+    mean = existingAggregateMap[:,:,1]
+    M2 = existingAggregateMap[:,:,2]
+    count += 1
+    delta = np.subtract(newMap, mean)
+    mean += np.divide(delta, count)
+    delta2 = np.subtract(newMap, mean)
+    M2 += np.multiply(delta, delta2)
+    return np.stack([count, mean, M2], axis=2)
+
+def welford_finalize_map(existingAggregateMap):
+    """Convert a Welford map into maps of arrays containing the statistics 
+    [mean, variance, sampleVariancce].
+
+    Parameters
+    ----------
+    existingAggregateMap : ndarray
+        Map of Welford tuples.
+
+    Returns
+    -------
+    finalWelford : ndarray
+        Array of Welford means, variances, and sample variances.
+
+    """
+    count = existingAggregateMap[:,:,0]
+    mean = existingAggregateMap[:,:,1]
+    M2 = existingAggregateMap[:,:,2]
+    variance = np.divide(M2, count)
+    sampleVariance = np.divide(M2, count - 1)
+    return np.stack([mean, variance, sampleVariance], axis=2)
 
 def precomputed_connectome_chunk(chunk_idx_mask,
                                  chunk_idx,
