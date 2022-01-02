@@ -5,9 +5,10 @@ Tools to generate a Precomputed Functional Connectome.
 
 import numpy as np
 import time
+import os
 from numba import jit
 import multiprocessing as mp
-
+from pathlib import Path
 
 @jit(nopython=True)
 def extract_chunk_signals(connectome_mat, roi_mat):
@@ -29,7 +30,6 @@ def extract_chunk_signals(connectome_mat, roi_mat):
     roi_masked_tc = connectome_mat[:, roi_mat > 0]
     return roi_masked_tc
 
-# def make_fz_maps(connectome_files, roi_mat, result_queue):
 def make_fz_maps(connectome_files, roi_mat):
     """Make Fz Maps for a chunk ROI and a connectome subject.
 
@@ -57,7 +57,6 @@ def make_fz_maps(connectome_files, roi_mat):
     finite_max = np.amax(np.ma.masked_invalid(fz), 1).data
     while(np.isinf(np.sum(fz))):
         fz[range(fz.shape[0]), np.argmax(fz, axis=1)] = finite_max
-    # result_queue.put(fz)
     return fz
 
 @jit(nopython=True)
@@ -101,21 +100,17 @@ def divide(a, b):
 def arctanh(a):
     """Numba wrapped np.arctanh
 
-    Parameters
-    ----------
-    a : ndarray
-        Matrix as input.
-
-    Returns
-    -------
-    ndarray
-        Element-wise arctanh.
-
     """
     return np.arctanh(a)
 
 @jit(nopython=True)
-def welford_update_map(count, existingAggregateMap, newMap):
+def tanh(a):
+    """Numba wrapped np.tanh
+
+    """
+    return np.tanh(a)
+
+def welford_update_map(count, mean, M2, newMap):
     """Update a Welford map with data from a new map. See
     https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 
@@ -123,8 +118,10 @@ def welford_update_map(count, existingAggregateMap, newMap):
     ----------
     count : int
         Welford counter.
-    existingAggregateMap : ndarray, shape (<brain size>, <ROI size>, 2)
-        An existing Welford map.
+    mean : ndarray, shape (<brain size>, <ROI size>)
+        Mean aggregate.
+    M2 : ndarray, shape (<brain size>, <ROI size>)
+        M2 aggregate.
     newMap : ndarray, shape (<brain size>, <ROI size>)
         New data to incorporate into a Welford map.
         
@@ -135,17 +132,46 @@ def welford_update_map(count, existingAggregateMap, newMap):
         Updated Welford map.
 
     """
-    mean = existingAggregateMap[:,:,0]
-    M2 = existingAggregateMap[:,:,1]
     count += 1
+    # mean, M2 = welford_update(count, newMap, mean, M2)
+    start = time.time()
+    delta = subtract(newMap, mean)
+    print(f"Calculate delta: {time.time()-start} seconds")
+    start = time.time()
+    mean += divide(delta, count)
+    print(f"Calculate mean: {time.time()-start} seconds")
+    start = time.time()
+    delta2 = subtract(newMap, mean)
+    print(f"Calculate delta2: {time.time()-start} seconds")
+    start = time.time()
+    M2 += multiply(delta, delta2)
+    print(f"Calculate M2: {time.time()-start} seconds")
+    return count, mean, M2
+
+@jit(nopython=True)
+def subtract(a,b):
+    return np.subtract(a,b)
+
+@jit(nopython=True)
+def multiply(a,b):
+    return np.multiply(a,b)
+
+@jit(nopython=True)
+def sqrt(a):
+    return np.sqrt(a)
+
+@jit(nopython=True)
+def welford_update(count, newMap, mean, M2):
+    """Numba wrapper for welford_update_map
+
+    """
     delta = np.subtract(newMap, mean)
     mean += np.divide(delta, count)
     delta2 = np.subtract(newMap, mean)
     M2 += np.multiply(delta, delta2)
-    return count, np.stack([mean, M2], axis=2)
+    return mean, M2
 
-@jit(nopython=True)
-def welford_finalize_map(count, existingAggregateMap):
+def welford_finalize_map(count, mean, M2):
     """Convert a Welford map into maps of arrays containing the statistics 
     [mean, variance, sampleVariancce].
 
@@ -153,8 +179,10 @@ def welford_finalize_map(count, existingAggregateMap):
     ----------
     count : int
         Welford counter.
-    existingAggregateMap : ndarray
-        Map of Welford tuples.
+    mean : ndarray
+        Welford Mean array.
+    M2 : ndarray
+        Welford M2 array.
 
     Returns
     -------
@@ -162,43 +190,58 @@ def welford_finalize_map(count, existingAggregateMap):
         Array of Welford means, variances, and sample variances.
 
     """
-    mean = existingAggregateMap[:,:,0]
-    M2 = existingAggregateMap[:,:,1]
-    variance = np.divide(M2, count)
-    sampleVariance = np.divide(M2, count - 1)
-    return np.stack([mean, variance, sampleVariance], axis=2)
+    sampleVariance = welford_finalize(count, M2)
+    return mean, sampleVariance
+    # return np.stack([mean, variance, sampleVariance], axis=2)
 
-def generate_welford_maps_from_queue(result_queue, welford_maps_queue):
-    """Creates welford maps from a queue filled with fz maps from make_fz_maps.
+@jit(nopython=True)
+def welford_finalize(count, M2):
+    sampleVariance = np.divide(M2, count-1)
+    return sampleVariance
 
-    Parameters
-    ----------
-    result_queue : mp.Queue
-        Queue filled with fz maps from make_fz_maps().
-    welford_maps_queue : mp.Queue
-        Queue onto which welford maps generated are pushed.
-
-    """
-    pass
-
-def make_stat_maps(fz_welford_maps, output_dir):
+def make_stat_maps(count, mean, M2, output_dir, chunk_idx):
     """Generate statistical maps from welford maps and output to file.
 
     Parameters
     ----------
-    fz_welford_maps : ndarray
-        Welford maps from generate_welford_maps_from_queue.
+    count : int
+        Number of connectome subjects.
+    mean : ndarray
+        Welford Mean array.
+    M2 : ndarray
+        Welford M2 array.
     output_dir : str
         Path to output directory.
+    chunk_idx : int
+        Chunk index number being processed.
 
     """
-    pass
+    mean, sampleVariance = welford_finalize_map(count, mean, M2)
+    map_types = ['AvgR_Fz', 'AvgR', 'T']
+    output_dir = os.path.abspath(output_dir)
+    output_dirs = {}
+    for map_type in map_types:
+        Path(os.path.join(output_dir, map_type)).mkdir(parents=True,
+                                                       exist_ok=True)
+        output_dirs[map_type] = os.path.join(output_dir,
+                                             map_type,
+                                             f"{chunk_idx}_{map_type}.npy")
+    # Save AvgR_Fz chunk
+    np.save(output_dirs['AvgR_Fz'], mean)
+    # Save AvgR chunk
+    np.save(output_dirs['AvgR'], tanh(mean))
+    # Save T Chunk
+    ttest_denom = sqrt(divide(sampleVariance, count))
+    np.save(output_dirs['T'], divide(mean, ttest_denom))
+    print("Output Chunk files to:")
+    print(f"AvgR_Fz: {output_dirs['AvgR_Fz']}")
+    print(f"AvgR: {output_dirs['AvgR']}")
+    print(f"T: {output_dirs['T']}")
 
 def precomputed_connectome_chunk(chunk_idx_mask,
                                  chunk_idx,
                                  connectome_dir,
-                                 output_dir,
-                                 workers = 8):
+                                 output_dir):
     """Generate a precomputed connectome chunk (AvgR/Fz/T)
 
     Parameters
