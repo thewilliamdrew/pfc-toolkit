@@ -4,8 +4,12 @@ Tools to generate a Precomputed Functional Connectome.
 """
 
 import numpy as np
+import time
+from numba import jit
 import multiprocessing as mp
 
+
+@jit(nopython=True)
 def extract_chunk_signals(connectome_mat, roi_mat):
     """Extract Chunk TC Signal from a connectome subject.
 
@@ -25,7 +29,8 @@ def extract_chunk_signals(connectome_mat, roi_mat):
     roi_masked_tc = connectome_mat[:, roi_mat > 0]
     return roi_masked_tc
 
-def make_fz_maps(connectome_files, roi_mat, result_queue):
+# def make_fz_maps(connectome_files, roi_mat, result_queue):
+def make_fz_maps(connectome_files, roi_mat):
     """Make Fz Maps for a chunk ROI and a connctome subject.
 
     Parameters
@@ -41,10 +46,22 @@ def make_fz_maps(connectome_files, roi_mat, result_queue):
     connectome_mat = np.load(connectome_files[0]).astype(np.float32)
     connectome_norms_mat = np.load(connectome_files[1]).astype(np.float32)
 
+    fz = calculate_corr(roi_mat, connectome_mat, connectome_norms_mat)
+    # result_queue.put(fz)
+    return fz
+
+@jit(nopython=True)
+def calculate_corr(roi_mat, connectome_mat, connectome_norms_mat):
     chunk_tc = extract_chunk_signals(connectome_mat, roi_mat)
+    start = time.time()
+    print(f"Calculating corr_num")
     corr_num = np.matmul(connectome_mat.T, chunk_tc)
+    print(f"Calculated corr_num in {time.time()-start} seconds")
+    start = time.time()
+    print(f"Calculating corr_denom")
     corr_denom = np.matmul(connectome_norms_mat.reshape(-1,1),
                            np.linalg.norm(chunk_tc, axis=0).reshape(1,-1))
+    print(f"Calculated corr_denom in {time.time()-start} seconds")
     np.seterr(invalid='ignore')
     corr = np.divide(corr_num, corr_denom)
     corr[np.isnan(corr)] = 0
@@ -53,8 +70,9 @@ def make_fz_maps(connectome_files, roi_mat, result_queue):
     for i in range(fz.shape[1]):
         finite_max = fz[:,i][np.isfinite(fz[:,i])].max()
         fz[:,i][np.isinf(fz[:,i])] = finite_max
-    result_queue.put(fz)
+    return fz
 
+@jit(nopython=True)
 def welford_update_map(count, existingAggregateMap, newMap):
     """Update a Welford map with data from a new map. See
     https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
@@ -84,6 +102,7 @@ def welford_update_map(count, existingAggregateMap, newMap):
     M2 += np.multiply(delta, delta2)
     return count, np.stack([mean, M2], axis=2)
 
+@jit(nopython=True)
 def welford_finalize_map(count, existingAggregateMap):
     """Convert a Welford map into maps of arrays containing the statistics 
     [mean, variance, sampleVariancce].
@@ -106,6 +125,32 @@ def welford_finalize_map(count, existingAggregateMap):
     variance = np.divide(M2, count)
     sampleVariance = np.divide(M2, count - 1)
     return np.stack([mean, variance, sampleVariance], axis=2)
+
+def generate_welford_maps_from_queue(result_queue, welford_maps_queue):
+    """Creates welford maps from a queue filled with fz maps from make_fz_maps.
+
+    Parameters
+    ----------
+    result_queue : mp.Queue
+        Queue filled with fz maps from make_fz_maps().
+    welford_maps_queue : mp.Queue
+        Queue onto which welford maps generated are pushed.
+
+    """
+    pass
+
+def make_stat_maps(fz_welford_maps, output_dir):
+    """Generate statistical maps from welford maps and output to file.
+
+    Parameters
+    ----------
+    fz_welford_maps : ndarray
+        Welford maps from generate_welford_maps_from_queue.
+    output_dir : str
+        Path to output directory.
+
+    """
+    pass
 
 def precomputed_connectome_chunk(chunk_idx_mask,
                                  chunk_idx,
