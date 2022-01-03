@@ -40,12 +40,6 @@ if __name__ == "__main__":
     max_idx = np.max(image.get_data(chunk_idx_mask))
     assert (chunk_idx > 0) & (chunk_idx < max_idx), f"Chunk index out of range. Choose an index from 1-{max_idx}."
 
-    print(f"mask: {mask}")
-    print(f"chunk_idx_mask: {chunk_idx_mask}")
-    print(f"chunk_idx: {chunk_idx}")
-    print(f"connectome_dir: {connectome_dir}")
-    print(f"output_dir: {output_dir}")
-
     processing.precomputed_connectome_chunk(mask,
                                             chunk_idx_mask,
                                             chunk_idx,
