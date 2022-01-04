@@ -1,6 +1,6 @@
 """usage: generate_pfc_combo_chunks.py [-h] [-b] -c -i -cs -o 
 
-Generate AvgR, AvgR_Fz, and T functional connectivity chunks for a single chunk.
+Generate Combo chunks for a single chunk.
 
 Arguments:
   -h, --help        show this help message and exit
@@ -16,8 +16,8 @@ Arguments:
   -cs, --conn-dir   Path to directory containing individual subject connectome
                     files.
 
-  -o, --output-dir  Path to output directory. */AvgR, */AvgR_Fz, and */T will be
-                    created in this directory if they do not already exist.
+  -o, --output-dir  Path to output directory. */Combo will be created in this 
+                    directory if they do not already exist.
 
 """
 import os
@@ -27,8 +27,8 @@ from pfctoolkit import processing, datasets
 from nilearn import image
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate AvgR, AvgR_Fz, and T"
-    " functional connectivity chunks for a single chunk.")
+    parser = argparse.ArgumentParser(description="Generate Combo chunks for a "
+                                                 "single chunk.")
 
     parser.add_argument("-b","--brain-mask", metavar='\b', help="Name of binary"
     " brain mask found in pfc.toolkits.datasets. Must be the same mask used to"
@@ -46,8 +46,8 @@ if __name__ == "__main__":
     required=True)
 
     parser.add_argument("-o", "--output-dir", metavar='\b', help="Path to "
-    "output directory. */AvgR, */AvgR_Fz, and */T will be created in this "
-    "directory if they do not already exist.", type=str, required=True)
+    "output directory. */Combo will be created in this directory if they do not"
+    " already exist.", type=str, required=True)
 
     args = parser.parse_args()
 
