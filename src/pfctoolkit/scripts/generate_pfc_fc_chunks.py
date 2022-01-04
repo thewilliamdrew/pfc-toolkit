@@ -1,0 +1,74 @@
+"""usage: generate_pfc_fc_chunks.py [-h] [-b] -c -i -cs -o 
+
+Generate AvgR, AvgR_Fz, and T functional connectivity chunks for a single chunk.
+
+Arguments:
+  -h, --help        show this help message and exit
+
+  -b, --brain-mask  Name of binary brain mask found in pfc.toolkits.datasets.
+                    Must be the same mask used to generate the chunk index map.
+                    Defaults to 'MNI152_T1_2mm_brain_mask_dil'
+
+  -c, --chunk-mask  Path to mask containing voxel-wise chunk labels.
+
+  -i, --chunk-idx   Index of chunk to process.
+
+  -cs, --conn-dir   Path to directory containing individual subject connectome
+                    files.
+
+  -o, --output-dir  Path to output directory. */AvgR, */AvgR_Fz, and */T will be
+                    created in this directory if they do not already exist.
+
+"""
+import os
+import numpy as np
+import argparse
+from pfctoolkit import processing, datasets
+from nilearn import image
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate AvgR, AvgR_Fz, and T"
+    " functional connectivity chunks for a single chunk.")
+
+    parser.add_argument("-b","--brain-mask", metavar='\b', help="Name of binary"
+    " brain mask found in pfc.toolkits.datasets. Must be the same mask used to"
+    " generate the chunk index map. Defaults to 'MNI152_T1_2mm_brain_mask_dil'",
+    type=str, default='MNI152_T1_2mm_brain_mask_dil')
+
+    parser.add_argument("-c", "--chunk-mask", metavar='\b', help="Path to mask "
+    "containing voxel-wise chunk labels.", type=str, required=True)
+
+    parser.add_argument("-i", "--chunk-idx", metavar='\b', help="Index of chunk"
+    " to process.", type=int, required=True)
+
+    parser.add_argument("-cs","--conn-dir", metavar='\b', help="Path to "
+    "directory containing individual subject connectome files.", type=str,
+    required=True)
+
+    parser.add_argument("-o", "--output-dir", metavar='\b', help="Path to "
+    "output directory. */AvgR, */AvgR_Fz, and */T will be created in this "
+    "directory if they do not already exist.", type=str, required=True)
+
+    args = parser.parse_args()
+
+    mask = datasets.get_img_path(args.bmask)
+    chunk_idx_mask = os.path.abspath(args.cmask)
+    chunk_idx = args.idx
+    connectome_dir = os.path.abspath(args.conn)
+    output_dir = os.path.abspath(args.out)
+
+    assert os.path.exists(chunk_idx_mask), \
+           f"Chunk mask not found: {chunk_idx_mask}"
+    assert os.path.exists(connectome_dir), \
+           f"Connectome directory not found: {connectome_dir}"
+    assert os.path.exists(output_dir), \
+           f"Output directory not found: {output_dir}"
+    max_idx = np.max(image.get_data(chunk_idx_mask))
+    assert (chunk_idx > 0) & (chunk_idx < max_idx), \
+           f"Chunk index out of range. Choose an index from 1-{max_idx}."
+
+    processing.precomputed_connectome_chunk(mask,
+                                            chunk_idx_mask,
+                                            chunk_idx,
+                                            connectome_dir,
+                                            output_dir)
