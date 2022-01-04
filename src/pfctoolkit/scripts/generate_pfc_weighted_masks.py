@@ -1,4 +1,4 @@
-"""usage: generate_pfc_fc_chunks.py [-h] [-b] -c -i -cs -o 
+"""usage: generate_pfc_combo_chunks.py [-h] [-b] -c -i -cs -o 
 
 Generate AvgR, AvgR_Fz, and T functional connectivity chunks for a single chunk.
 
@@ -35,15 +35,11 @@ if __name__ == "__main__":
     " generate the chunk index map. Defaults to 'MNI152_T1_2mm_brain_mask_dil'",
     type=str, default='MNI152_T1_2mm_brain_mask_dil')
 
-    parser.add_argument("-c", "--chunk-mask", metavar='\b', help="Path to mask "
-    "containing voxel-wise chunk labels.", type=str, required=True)
-
-    parser.add_argument("-i", "--chunk-idx", metavar='\b', help="Index of chunk"
-    " to process.", type=int, required=True)
-
     parser.add_argument("-cs","--conn-dir", metavar='\b', help="Path to "
     "directory containing individual subject connectome files.", type=str,
     required=True)
+
+    parser.add_argument("-n","--conn-name", metavar='\b', help="Name of connectome to use for naming mask files.", type=str, default="")
 
     parser.add_argument("-o", "--output-dir", metavar='\b', help="Path to "
     "output directory. */AvgR, */AvgR_Fz, and */T will be created in this "
@@ -52,23 +48,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     mask = datasets.get_img_path(args.b)
-    chunk_idx_mask = os.path.abspath(args.c)
-    chunk_idx = args.i
     connectome_dir = os.path.abspath(args.cs)
+    connectome_name = args.n
     output_dir = os.path.abspath(args.o)
 
-    assert os.path.exists(chunk_idx_mask), \
-           f"Chunk mask not found: {chunk_idx_mask}"
     assert os.path.exists(connectome_dir), \
            f"Connectome directory not found: {connectome_dir}"
     assert os.path.exists(output_dir), \
            f"Output directory not found: {output_dir}"
-    max_idx = np.max(image.get_data(chunk_idx_mask))
-    assert (chunk_idx > 0) & (chunk_idx < max_idx), \
-           f"Chunk index out of range. Choose an index from 1-{max_idx}."
 
-    processing.precomputed_connectome_fc_chunk(mask,
-                                               chunk_idx_mask,
-                                               chunk_idx,
-                                               connectome_dir,
-                                               output_dir)
+    processing.precomputed_connectome_weighted_masks(mask,
+                                                     connectome_dir,
+                                                     output_dir,
+                                                     connectome_name)

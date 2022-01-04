@@ -1,4 +1,4 @@
-"""usage: generate_pfc_fc_chunks.py [-h] [-b] -c -i -cs -o 
+"""usage: generate_pfc_combo_chunks.py [-h] [-b] -c -i -cs -o 
 
 Generate AvgR, AvgR_Fz, and T functional connectivity chunks for a single chunk.
 
@@ -67,8 +67,8 @@ if __name__ == "__main__":
     assert (chunk_idx > 0) & (chunk_idx < max_idx), \
            f"Chunk index out of range. Choose an index from 1-{max_idx}."
 
-    processing.precomputed_connectome_fc_chunk(mask,
-                                               chunk_idx_mask,
-                                               chunk_idx,
-                                               connectome_dir,
-                                               output_dir)
+    processing.precomputed_connectome_combo_chunk(mask,
+                                                  chunk_idx_mask,
+                                                  chunk_idx,
+                                                  connectome_dir,
+                                                  output_dir)

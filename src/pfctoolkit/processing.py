@@ -320,7 +320,7 @@ def precomputed_connectome_combo_chunk(mask,
 def precomputed_connectome_weighted_masks(mask,
                                           connectome_dir,
                                           output_dir,
-                                          connectome_name = None):
+                                          connectome_name = ""):
     """Generate the precomputed connectome norm and stdev weighted masks.
 
     Parameters
@@ -355,7 +355,7 @@ def precomputed_connectome_weighted_masks(mask,
         agg_norm_square = calculate_norm_square(agg_norm_square, bold)
         timesteps += bold.shape[0]
     output_dir = os.path.abspath(output_dir)
-    if connectome_name is None:
+    if connectome_name:
         connectome_name = os.path.basename(output_dir)
     norm_fname = os.path.join(output_dir,
                               f"{connectome_name}_norm_weighted_mask.nii.gz")
