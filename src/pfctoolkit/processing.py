@@ -173,14 +173,14 @@ def make_stat_maps(count, mean, M2, output_dir, chunk_idx):
                                              f"{chunk_idx}_{map_type}.npy")
     print("Output Chunk files to:")
     # Save AvgR_Fz chunk
-    np.save(output_dirs['AvgR_Fz'], mean)
+    np.save(output_dirs['AvgR_Fz'], mean.T)
     print(f"AvgR_Fz: {output_dirs['AvgR_Fz']}")
     # Save AvgR chunk
-    np.save(output_dirs['AvgR'], tanh(mean))
+    np.save(output_dirs['AvgR'], tanh(mean).T)
     print(f"AvgR: {output_dirs['AvgR']}")
     # Save T Chunk
     ttest_denom = sqrt(divide(sampleVariance, count))
-    np.save(output_dirs['T'], divide(mean, ttest_denom))
+    np.save(output_dirs['T'], divide(mean, ttest_denom).T)
     print(f"T: {output_dirs['T']}")
 
 @jit(nopython=True)
