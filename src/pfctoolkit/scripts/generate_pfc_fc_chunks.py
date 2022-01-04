@@ -51,11 +51,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    mask = datasets.get_img_path(args.b)
-    chunk_idx_mask = os.path.abspath(args.c)
-    chunk_idx = args.i
-    connectome_dir = os.path.abspath(args.cs)
-    output_dir = os.path.abspath(args.o)
+    mask = datasets.get_img_path(args.brain_mask)
+    chunk_idx_mask = os.path.abspath(args.chunk_mask)
+    chunk_idx = args.chunk_idx
+    connectome_dir = os.path.abspath(args.conn_dir)
+    output_dir = os.path.abspath(args.output_dir)
 
     assert os.path.exists(chunk_idx_mask), \
            f"Chunk mask not found: {chunk_idx_mask}"

@@ -44,10 +44,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    mask = datasets.get_img_path(args.b)
-    connectome_dir = os.path.abspath(args.cs)
-    connectome_name = args.n
-    output_dir = os.path.abspath(args.o)
+    mask = datasets.get_img_path(args.brain_mask)
+    connectome_dir = os.path.abspath(args.conn_dir)
+    connectome_name = args.conn_name
+    output_dir = os.path.abspath(args.output_dir)
 
     assert os.path.exists(connectome_dir), \
            f"Connectome directory not found: {connectome_dir}"
