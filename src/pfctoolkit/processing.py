@@ -338,6 +338,8 @@ def precomputed_connectome_weighted_masks(mask,
     start = time.time()
     masker = tools.NiftiMasker(mask)
     brain_size = int(np.sum(image.get_data(mask)))
+    connectome_dir = os.path.abspath(connectome_dir)
+    output_dir = os.path.abspath(output_dir)
     connectome_files = natsorted(glob(os.path.join(connectome_dir,
                                                    "*[!_norms].npy")))
     if (len(connectome_files) == 0):
@@ -354,9 +356,8 @@ def precomputed_connectome_weighted_masks(mask,
                                           " voxels."
         agg_norm_square = calculate_norm_square(agg_norm_square, bold)
         timesteps += bold.shape[0]
-    output_dir = os.path.abspath(output_dir)
-    if connectome_name:
-        connectome_name = os.path.basename(output_dir)
+    if (connectome_name == ""):
+        connectome_name = os.path.basename(connectome_dir)
     norm_fname = os.path.join(output_dir,
                               f"{connectome_name}_norm_weighted_mask.nii.gz")
     std_fname = os.path.join(output_dir,
