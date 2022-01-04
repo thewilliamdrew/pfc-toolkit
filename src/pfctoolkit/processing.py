@@ -61,6 +61,11 @@ def multiply(a,b):
 def sqrt(a):
     return np.sqrt(a)
 
+@jit(nopython=True)
+def make_combo_chunk(agg_combo_chunk, chunk_mask, bold):
+    chunk_bold = bold[:,chunk_mask]
+    return np.add(agg_combo_chunk, np.dot(chunk_bold.T, bold))
+
 def make_fz_maps(connectome_files, roi_mat):
     """Make Fz Maps for a chunk ROI and a connectome subject.
 
@@ -179,12 +184,12 @@ def make_stat_maps(count, mean, M2, output_dir, chunk_idx):
     np.save(output_dirs['T'], divide(mean, ttest_denom))
     print(f"T: {output_dirs['T']}")
 
-def precomputed_connectome_chunk(mask,
-                                 chunk_idx_mask,
-                                 chunk_idx,
-                                 connectome_dir,
-                                 output_dir):
-    """Generate a precomputed connectome FC map chunk (AvgR/Fz/T)
+def precomputed_connectome_fc_chunk(mask,
+                                    chunk_idx_mask,
+                                    chunk_idx,
+                                    connectome_dir,
+                                    output_dir):
+    """Generate a precomputed connectome FC map chunk (AvgR/Fz/T).
 
     Parameters
     ----------
@@ -207,6 +212,7 @@ def precomputed_connectome_chunk(mask,
     " mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"
     " and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
     masker = tools.NiftiMasker(mask)
+    brain_size = int(np.sum(mask.get_fdata()))
 
     # Get list of connectome files
     connectome_files_norms = natsorted(glob(os.path.join(connectome_dir,
@@ -220,11 +226,11 @@ def precomputed_connectome_chunk(mask,
     # Get binary chunk roi in brain-space
     chunk_roi = masker.transform(image.math_img(f"img == {chunk_idx}",
                                                 img = chunk_idx_mask))
-
+    chunk_size = int(np.sum(chunk_roi))
     # Initialize Welford Maps
     count = 0
-    mean = np.zeros((292019, 3209), dtype=np.float32)
-    M2 = np.zeros((292019, 3209), dtype=np.float32)
+    mean = np.zeros((brain_size, chunk_size), dtype=np.float32)
+    M2 = np.zeros((brain_size, chunk_size), dtype=np.float32)
     # For each connectome subject
     for connectome_file in tqdm(connectome_files):
         # Calculate Fz maps from a connectome subject
@@ -234,5 +240,55 @@ def precomputed_connectome_chunk(mask,
     # Finalize Welford Maps and output to file
     print("Outputting Chunk to disk...")
     make_stat_maps(count, mean, M2, output_dir, chunk_idx)
+    end = time.time()
+    print(f"Elapsed time: {end-start} seconds")
+
+def precomputed_connectome_combo_chunk(mask,
+                                       chunk_idx_mask,
+                                       chunk_idx,
+                                       connectome_dir,
+                                       output_dir):
+    """Generate a precomputed connectome combo chunk.
+
+    Parameters
+    ----------
+    mask : str
+        Path to binary mask.
+    chunk_idx_mask : str
+        Path to mask containing voxel-wise chunk labels.
+    chunk_idx : int
+        Index of chunk to process.
+    connectome_dir : str
+        Path to individual subject connectome files.
+    output_dir : str
+        Path to output directory.
+
+    """
+    start = time.time()
+    # Check that mask and chunk_idx_mask are in same space
+    same_size = np.sum(image.get_data(mask)==(image.get_data(chunk_idx_mask)>0))
+    assert same_size==np.sum(image.get_data(mask)), f"Binary mask and chunk idx"
+    " mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"
+    " and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
+    masker = tools.NiftiMasker(mask)
+    brain_size = int(np.sum(mask.get_fdata()))
+    connectome_files = natsorted(glob(os.path.join(connectome_dir,
+                                                   "*[!_norms].npy")))
+    if (len(connectome_files) == 0):
+        raise ValueError("No connectome files found")
+    else:
+        print(f"Found {len(connectome_files)} connectome subjects!")
+    # Get binary chunk roi in brain-space
+    chunk_roi = masker.transform(image.math_img(f"img == {chunk_idx}",
+                                                img = chunk_idx_mask))
+    chunk_size = int(np.sum(chunk_roi))
+    agg_combo_chunk = np.zeros((chunk_size, brain_size), dtype=np.float32)
+    for subject in tqdm(connectome_files):
+        bold = np.load(subject).astype(np.float32)
+        agg_combo_chunk = make_combo_chunk(agg_combo_chunk, chunk_roi, bold)
+    output_dir = os.path.join(os.path.abspath(output_dir), 
+                              "Combo", 
+                              f"{chunk_idx}_Combo.npy")
+    np.save(output_dir, agg_combo_chunk)
     end = time.time()
     print(f"Elapsed time: {end-start} seconds")
