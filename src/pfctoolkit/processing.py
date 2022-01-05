@@ -62,8 +62,7 @@ def sqrt(a):
     return np.sqrt(a)
 
 @jit(nopython=True)
-def make_combo_chunk(agg_combo_chunk, chunk_mask, bold):
-    chunk_bold = bold[:,chunk_mask]
+def make_combo_chunk(agg_combo_chunk, chunk_bold, bold):
     return np.add(agg_combo_chunk, np.dot(chunk_bold.T, bold))
 
 def make_fz_maps(connectome_files, roi_mat):
@@ -174,14 +173,14 @@ def make_stat_maps(count, mean, M2, output_dir, chunk_idx):
                                              f"{chunk_idx}_{map_type}.npy")
     print("Output Chunk files to:")
     # Save AvgR_Fz chunk
-    np.save(output_dirs['AvgR_Fz'], mean)
+    np.save(output_dirs['AvgR_Fz'], mean.T)
     print(f"AvgR_Fz: {output_dirs['AvgR_Fz']}")
     # Save AvgR chunk
-    np.save(output_dirs['AvgR'], tanh(mean))
+    np.save(output_dirs['AvgR'], tanh(mean).T)
     print(f"AvgR: {output_dirs['AvgR']}")
     # Save T Chunk
     ttest_denom = sqrt(divide(sampleVariance, count))
-    np.save(output_dirs['T'], divide(mean, ttest_denom))
+    np.save(output_dirs['T'], divide(mean, ttest_denom).T)
     print(f"T: {output_dirs['T']}")
 
 @jit(nopython=True)
@@ -226,13 +225,13 @@ def precomputed_connectome_fc_chunk(mask,
 
     """
     start = time.time()
-    # Check that mask and chunk_idx_mask are in same space
-    same_size = np.sum(image.get_data(mask)==(image.get_data(chunk_idx_mask)>0))
-    assert same_size==np.sum(image.get_data(mask)), "Binary mask and chunk idx"\
-    f" mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"\
-    f" and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
+    # # Check that mask and chunk_idx_mask are in same space
+    # same_size = int(np.sum(image.get_data(mask)==(image.get_data(chunk_idx_mask)>0)))
+    # assert same_size==int(np.sum(image.get_data(mask))), "Binary mask and chunk idx"\
+    # f" mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"\
+    # f" and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
     masker = tools.NiftiMasker(mask)
-    brain_size = int(np.sum(mask.get_fdata()))
+    brain_size = int(np.sum(image.get_data(mask)))
 
     # Get list of connectome files
     connectome_files_norms = natsorted(glob(os.path.join(connectome_dir,
@@ -285,11 +284,11 @@ def precomputed_connectome_combo_chunk(mask,
 
     """
     start = time.time()
-    # Check that mask and chunk_idx_mask are in same space
-    same_size = np.sum(image.get_data(mask)==(image.get_data(chunk_idx_mask)>0))
-    assert same_size==np.sum(image.get_data(mask)), "Binary mask and chunk idx"\
-    f" mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"\
-    f" and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
+    # # Check that mask and chunk_idx_mask are in same space
+    # same_size = int(np.sum(image.get_data(mask)==(image.get_data(chunk_idx_mask)>0)))
+    # assert same_size==int(np.sum(image.get_data(mask))), "Binary mask and chunk idx"\
+    # f" mask do not match! Binary mask has size {np.sum(image.get_data(mask))}"\
+    # f" and chunk idx mask has size {np.sum(image.get_data(chunk_idx_mask)>0)}"
     masker = tools.NiftiMasker(mask)
     brain_size = int(np.sum(image.get_data(mask)))
     connectome_files = natsorted(glob(os.path.join(connectome_dir,
@@ -309,7 +308,8 @@ def precomputed_connectome_combo_chunk(mask,
                                          f"Mask has size {brain_size} voxels,"\
                                          f" the connectome has {bold.shape[1]}"\
                                           " voxels."
-        agg_combo_chunk = make_combo_chunk(agg_combo_chunk, chunk_roi, bold)
+        chunk_bold = bold[:,chunk_roi.astype(bool)]
+        agg_combo_chunk = make_combo_chunk(agg_combo_chunk, chunk_bold, bold)
     Path(os.path.join(output_dir, "Combo")).mkdir(parents=True, exist_ok=True)
     output_dir = os.path.join(os.path.abspath(output_dir), "Combo",
                               f"{chunk_idx}_Combo.npy")
@@ -320,7 +320,7 @@ def precomputed_connectome_combo_chunk(mask,
 def precomputed_connectome_weighted_masks(mask,
                                           connectome_dir,
                                           output_dir,
-                                          connectome_name = None):
+                                          connectome_name = ""):
     """Generate the precomputed connectome norm and stdev weighted masks.
 
     Parameters
@@ -338,6 +338,8 @@ def precomputed_connectome_weighted_masks(mask,
     start = time.time()
     masker = tools.NiftiMasker(mask)
     brain_size = int(np.sum(image.get_data(mask)))
+    connectome_dir = os.path.abspath(connectome_dir)
+    output_dir = os.path.abspath(output_dir)
     connectome_files = natsorted(glob(os.path.join(connectome_dir,
                                                    "*[!_norms].npy")))
     if (len(connectome_files) == 0):
@@ -354,9 +356,8 @@ def precomputed_connectome_weighted_masks(mask,
                                           " voxels."
         agg_norm_square = calculate_norm_square(agg_norm_square, bold)
         timesteps += bold.shape[0]
-    output_dir = os.path.abspath(output_dir)
-    if connectome_name is None:
-        connectome_name = os.path.basename(output_dir)
+    if (connectome_name == ""):
+        connectome_name = os.path.basename(connectome_dir)
     norm_fname = os.path.join(output_dir,
                               f"{connectome_name}_norm_weighted_mask.nii.gz")
     std_fname = os.path.join(output_dir,
