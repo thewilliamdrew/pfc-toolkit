@@ -64,7 +64,7 @@ if __name__ == "__main__":
     assert os.path.exists(output_dir), \
            f"Output directory not found: {output_dir}"
     max_idx = np.max(image.get_data(chunk_idx_mask))
-    assert (chunk_idx > 0) & (chunk_idx < max_idx), \
+    assert (chunk_idx > 0) & (chunk_idx <= max_idx), \
            f"Chunk index out of range. Choose an index from 1-{max_idx}."
 
     processing.precomputed_connectome_fc_chunk(mask,
