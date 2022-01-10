@@ -28,7 +28,7 @@ def extract_chunk_signals(connectome_mat, roi_mat):
     -------
     roi_masked_tc : ndarray
         TC signals extracted from connectome TC according to ROI binary mask
-    
+
     """
     roi_masked_tc = connectome_mat[:, roi_mat > 0]
     return roi_masked_tc
@@ -86,10 +86,11 @@ def make_fz_maps(connectome_files, roi_mat):
     corr = divide(corr_num, corr_denom)
     corr[np.isnan(corr)] = 0
     fz = arctanh(corr)
-    # Fix infinite values in the case of single voxel autocorrelations
+    # Fix infinite values and nans in the case of single voxel autocorrelations
     finite_max = np.amax(np.ma.masked_invalid(fz), 1).data
-    while(np.isinf(np.sum(fz))):
-        fz[range(fz.shape[0]), np.argmax(fz, axis=1)] = finite_max
+    rows, cols = np.where(np.isinf(fz) | np.isnan(fz))
+    for row, col in tqdm(zip(rows, cols)):
+        fz[row, col] = finite_max[row]
     return fz
 
 @jit(nopython=True)
