@@ -3,7 +3,9 @@
 # pfc-toolkit
 The Precomputed Functional Connectome Toolkit (**pfc-toolkit**) is a Python module for functional lesion network mapping using the Precomputed Functional Connectome and is distributed under the 3-Cause BSD license.
 
-The project was started in 2019 by William Drew as an undergraduate thesis project working with Dr. Michael D. Fox, MD, PhD first at the Berenson-Allen Center for Noninvasive Brain Stimulation at Beth Israel Deaconess Medical Center and later at the Center for Brain Circuit Therapeutics at Brigham and Women's Hospital.
+The project was started in 2019 by William Drew as an undergraduate thesis project. 
+
+The project was supervised by Dr. Michael D. Fox, MD, PhD first at the Berenson-Allen Center for Noninvasive Brain Stimulation at Beth Israel Deaconess Medical Center and later at the Center for Brain Circuit Therapeutics at Brigham and Women's Hospital.
 
 ## Installation
 ### Dependencies
