@@ -1,4 +1,32 @@
-# pfc-toolkit
-The Precomputed Functional Connectome Toolkit
-
 [![PyPI version shields.io](https://img.shields.io/pypi/v/pfc-toolkit.svg)](https://pypi.python.org/pypi/pfc-toolkit/)
+
+# pfc-toolkit
+The Precomputed Functional Connectome Toolkit (**pfc-toolkit**) is a Python module for functional lesion network mapping using the Precomputed Functional Connectome and is distributed under the 3-Cause BSD license.
+
+## Installation
+### Dependencies
+pfc-toolkit requires:
+- Python (>=3.6)
+- NumPy
+- SciPy
+- Numba
+- Nilearn
+- tqdm
+- natsort
+- importlib
+
+### User Installation
+Install using `pip`
+```
+pip install -U pfc-toolkit
+```
+
+## Development
+### Source code
+You can check the latest sources with the command:
+```
+git clone https://github.com/thewilliamdrew/pfc-toolkit.git
+```
+
+## Help and Support
+### Documentation
