@@ -24,23 +24,48 @@ from pfctoolkit import processing, datasets
 from nilearn import image
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate BOLD norm and stdev "
-    "weighted masks for a precomputed connectome.")
+    parser = argparse.ArgumentParser(
+        description="Generate BOLD norm and stdev "
+        "weighted masks for a precomputed connectome."
+    )
 
-    parser.add_argument("-b","--brain-mask", metavar='\b', help="Name of binary"
-    " brain mask found in pfc.toolkits.datasets. Must be the same mask used to"
-    " generate the chunk index map. Defaults to 'MNI152_T1_2mm_brain_mask_dil'",
-    type=str, default='MNI152_T1_2mm_brain_mask_dil')
+    parser.add_argument(
+        "-b",
+        "--brain-mask",
+        metavar="\b",
+        help="Name of binary"
+        " brain mask found in pfc.toolkits.datasets. Must be the same mask used to"
+        " generate the chunk index map. Defaults to 'MNI152_T1_2mm_brain_mask_dil'",
+        type=str,
+        default="MNI152_T1_2mm_brain_mask_dil",
+    )
 
-    parser.add_argument("-cs","--conn-dir", metavar='\b', help="Path to "
-    "directory containing individual subject connectome files.", type=str,
-    required=True)
+    parser.add_argument(
+        "-cs",
+        "--conn-dir",
+        metavar="\b",
+        help="Path to " "directory containing individual subject connectome files.",
+        type=str,
+        required=True,
+    )
 
-    parser.add_argument("-n","--conn-name", metavar='\b', help="Name of "
-    "connectome to use for naming mask files.", type=str, default="")
+    parser.add_argument(
+        "-n",
+        "--conn-name",
+        metavar="\b",
+        help="Name of " "connectome to use for naming mask files.",
+        type=str,
+        default="",
+    )
 
-    parser.add_argument("-o", "--output-dir", metavar='\b', help="Path to "
-    "output directory.", type=str, required=True)
+    parser.add_argument(
+        "-o",
+        "--output-dir",
+        metavar="\b",
+        help="Path to " "output directory.",
+        type=str,
+        required=True,
+    )
 
     args = parser.parse_args()
 
@@ -49,12 +74,11 @@ if __name__ == "__main__":
     connectome_name = args.conn_name
     output_dir = os.path.abspath(args.output_dir)
 
-    assert os.path.exists(connectome_dir), \
-           f"Connectome directory not found: {connectome_dir}"
-    assert os.path.exists(output_dir), \
-           f"Output directory not found: {output_dir}"
+    assert os.path.exists(
+        connectome_dir
+    ), f"Connectome directory not found: {connectome_dir}"
+    assert os.path.exists(output_dir), f"Output directory not found: {output_dir}"
 
-    processing.precomputed_connectome_weighted_masks(mask,
-                                                     connectome_dir,
-                                                     output_dir,
-                                                     connectome_name)
+    processing.precomputed_connectome_weighted_masks(
+        mask, connectome_dir, output_dir, connectome_name
+    )
