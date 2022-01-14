@@ -7,7 +7,7 @@ LICENSE = "BSD License"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="0.0.2",
+    version="0.0.3",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
@@ -17,7 +17,7 @@ setuptools.setup(
     project_urls={
         "Bug Tracker": "https://github.com/thewilliamdrew/pfc-toolkit/issues",
     },
-    license = LICENSE,
+    license=LICENSE,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved",
@@ -26,10 +26,7 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     include_package_data=True,
-    package_data={
-        'pfctoolkit.data' : ['*.nii.gz'],
-        'pfctoolkit.configs' : ['*.json']
-    },
+    package_data={"pfctoolkit.data": ["*.nii.gz"], "pfctoolkit.configs": ["*.json"]},
     install_requires=[
         "tqdm",
         "numba",
