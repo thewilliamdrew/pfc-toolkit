@@ -11,6 +11,7 @@ from glob import glob
 from nilearn import image
 from nilearn._utils import check_niimg
 
+
 def load_roi(roi_path):
     """Load ROIs from path or CSV.
 
@@ -20,31 +21,33 @@ def load_roi(roi_path):
         Path to CSV containing paths to NIfTI images OR
         Path to directory containing NIfTI images OR
         Path to NIfTI image.
-    
+
     Returns
     -------
     roi_paths : list of str
         List of paths to NIfTI image ROIs.
-    
+
     """
     if os.path.isdir(roi_path):
-        roi_paths = glob(os.path.join(os.path.abspath(roi_path),"*.nii*"))
-        if(len(roi_paths) == 0):
+        roi_paths = glob(os.path.join(os.path.abspath(roi_path), "*.nii*"))
+        if len(roi_paths) == 0:
             raise FileNotFoundError("No NIfTI images found!")
     else:
-        roi_extension = os.path.basename(roi_path).split('.')[1:]
-        if 'csv' in roi_extension:
-            with open(roi_path, newline = '') as f:
+        roi_extension = os.path.basename(roi_path).split(".")[1:]
+        if "csv" in roi_extension:
+            with open(roi_path, newline="") as f:
                 reader = csv.reader(f)
                 data = list(reader)
             roi_paths = [path for line in data for path in line]
-        elif 'nii' in roi_extension:
+        elif "nii" in roi_extension:
             roi_paths = [roi_path]
         else:
-            raise ValueError("Input File is not a NIfTI or a CSV containing "
-                             "paths to a list of NIfTIs")
+            raise ValueError(
+                "Input File is not a NIfTI or a CSV containing paths to NIfTIs"
+            )
     print(f"Found {len(roi_paths)} ROIs...")
     return roi_paths
+
 
 def get_chunks(rois, config):
     """Get list of dicts containing Chunks to load and their associated ROIs
@@ -63,11 +66,12 @@ def get_chunks(rois, config):
 
     """
     chunk_dict = {}
-    chunk_map = image.load_img(config.get('chunk_idx'))
+    chunk_map = image.load_img(config.get("chunk_idx"))
     for roi in tqdm(rois):
         roi_image = image.load_img(roi)
-        roi_chunks = image.math_img("img * mask", img = roi_image, 
-                                    mask = chunk_map).get_fdata()
+        roi_chunks = image.math_img(
+            "img * mask", img=roi_image, mask=chunk_map
+        ).get_fdata()
         chunks = np.unique(roi_chunks).astype(int)
         chunks = chunks[chunks != 0]
         for chunk in chunks:
@@ -76,6 +80,7 @@ def get_chunks(rois, config):
             else:
                 chunk_dict[chunk] = [roi]
     return chunk_dict
+
 
 class NiftiMasker:
     """
@@ -87,26 +92,27 @@ class NiftiMasker:
         Nifti binary mask.
     mask_idx : numpy.ndarray
         1D numpy.ndarray containing indexes from flattened mask image.
-    mask_shape : 3-tuple of ints 
+    mask_shape : 3-tuple of ints
         Shape of mask_idx.
     mask_size : int
         Number of voxels in entire space, including outside the brain.
 
     """
+
     def __init__(self, mask_img=None):
         """
         Parameters
         ----------
         mask_img : Niimg-like object
-            If string, consider it as a path to NIfTI image and call 
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
-            folder. If it is an object, check if affine attribute is present, 
+            If string, consider it as a path to NIfTI image and call
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home
+            folder. If it is an object, check if affine attribute is present,
             raise `TypeError` otherwise.
 
         """
         self.mask_img = check_niimg(mask_img)
         self.mask_data = self.mask_img.get_fdata().astype(np.float32)
-        self.mask_idx, = np.where((self.mask_data != 0).flatten())
+        (self.mask_idx,) = np.where((self.mask_data != 0).flatten())
         self.mask_shape = self.mask_data.shape
         self.mask_size = np.prod(self.mask_shape)
 
@@ -115,10 +121,10 @@ class NiftiMasker:
         Parameters
         ----------
         niimg : Niimg-like object
-            If string, consider it as a path to NIfTI image and call 
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home 
-            folder. If it is an object, check if affine attribute is present, 
-            raise `TypeError` otherwise. 
+            If string, consider it as a path to NIfTI image and call
+            `nibabel.load()` on it. The '~' symbol is expanded to the user home
+            folder. If it is an object, check if affine attribute is present,
+            raise `TypeError` otherwise.
         weight : bool, default False
             If True, transform the niimg with weighting. If False, transform the
             niimg without weighting.
@@ -127,7 +133,7 @@ class NiftiMasker:
         -------
         region_signals : numpy.ndarray
             Masked Nifti file.
-        
+
         """
         niimg = check_niimg(niimg).get_fdata().astype(np.float32)
         if weight:
@@ -141,7 +147,7 @@ class NiftiMasker:
         Parameters
         ----------
         flat_niimg : numpy.ndarray
-            1D array to unmask. 
+            1D array to unmask.
 
         Returns
         -------
@@ -151,8 +157,7 @@ class NiftiMasker:
         """
         new_img = np.zeros(self.mask_size, dtype=np.float32)
         new_img[self.mask_idx] = flat_niimg.astype(np.float32)
-        return image.new_img_like(self.mask_img, 
-                                  new_img.reshape(self.mask_shape))
+        return image.new_img_like(self.mask_img, new_img.reshape(self.mask_shape))
 
     def mask(self, niimg=None):
         """Masks 3D Nifti file into Masked 3D Nifti file.
