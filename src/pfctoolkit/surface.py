@@ -6,10 +6,7 @@ import os
 import csv
 import numpy as np
 import nibabel as nib
-from nilearn import image
-from scipy.io import savemat
-from nimlab import datasets as nimds
-from nimlab import functions as nimfs
+from pfctoolkit import datasets
 
 
 class GiftiMasker:
@@ -191,7 +188,7 @@ def concat_hemispheres_to_csv(gifti_paths, output_dir="", mask=""):
         roi_files.append(f)
     flist.close()
     if mask:
-        masker = GiftiMasker(nimds.get_img(mask))
+        masker = GiftiMasker(datasets.get_img(mask))
     if output_dir == "":
         output_dir = os.path.dirname(gifti_paths)
     subject_data = []
