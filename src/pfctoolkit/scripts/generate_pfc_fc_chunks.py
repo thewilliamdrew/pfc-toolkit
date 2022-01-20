@@ -20,11 +20,14 @@ Arguments:
                     created in this directory if they do not already exist.
 
 """
+
 import os
 import numpy as np
+import nibabel as nib
 import argparse
 from pfctoolkit import processing, datasets
 from nilearn import image
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -94,7 +97,10 @@ if __name__ == "__main__":
         connectome_dir
     ), f"Connectome directory not found: {connectome_dir}"
     assert os.path.exists(output_dir), f"Output directory not found: {output_dir}"
-    max_idx = np.max(image.get_data(chunk_idx_mask))
+    if ".nii" in chunk_idx_mask:
+        max_idx = np.max(image.get_data(chunk_idx_mask))
+    elif ".gii" in chunk_idx_mask:
+        max_idx = np.max(nib.load(chunk_idx_mask).agg_data())
     assert (chunk_idx > 0) & (
         chunk_idx <= max_idx
     ), f"Chunk index out of range. Choose an index from 1-{max_idx}."
