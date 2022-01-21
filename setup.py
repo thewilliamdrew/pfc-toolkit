@@ -7,7 +7,7 @@ LICENSE = "BSD License"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="0.0.5",
+    version="0.0.6",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
@@ -27,6 +27,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src"),
     include_package_data=True,
     package_data={
+        "pfctoolkit.chunks": ["*.nii.gz", "*.gii"],
         "pfctoolkit.data": ["*.nii.gz", "*.gii"],
         "pfctoolkit.configs": ["*.json"],
     },
