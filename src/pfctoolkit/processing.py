@@ -440,10 +440,16 @@ def precomputed_connectome_weighted_masks(
         timesteps += bold.shape[0]
     if connectome_name == "":
         connectome_name = os.path.basename(connectome_dir)
+    if image_type == "volume":
+        extension = ".nii.gz"
+    elif image_type == "surface":
+        extension = ".gii"
     norm_fname = os.path.join(
-        output_dir, f"{connectome_name}_norm_weighted_mask.nii.gz"
+        output_dir, f"{connectome_name}_norm_weighted_mask" + extension
     )
-    std_fname = os.path.join(output_dir, f"{connectome_name}_std_weighted_mask.nii.gz")
+    std_fname = os.path.join(
+        output_dir, f"{connectome_name}_std_weighted_mask" + extension
+    )
     norm_mask = sqrt(agg_norm_square)
     masker.inverse_transform(norm_mask).to_filename(norm_fname)
     print(f"Output norm weighted mask to: {norm_fname}")
