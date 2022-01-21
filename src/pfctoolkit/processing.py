@@ -2,15 +2,18 @@
 Tools to generate a Precomputed Functional Connectome.
 
 """
+
 import os
 import time
 import numpy as np
+import nibabel as nib
 from glob import glob
 from tqdm import tqdm
 from numba import jit
 from pathlib import Path
 from nilearn import image
 from pfctoolkit import tools
+from pfctoolkit import surface
 from natsort import natsorted
 
 
@@ -228,25 +231,42 @@ def precomputed_connectome_fc_chunk(
     Parameters
     ----------
     mask : str
-        Path to binary mask.
+        Path to binary mask (.nii or .gii).
     chunk_idx_mask : str
-        Path to mask containing voxel-wise chunk labels.
+        Path to mask containing voxel-wise chunk labels (.nii or .gii).
     chunk_idx : int
         Index of chunk to process.
     connectome_dir : str
-        Path to individual subject connectome files.
+        Path to individual subject connectome files (dir containing .npy).
     output_dir : str
         Path to output directory.
 
     """
     start = time.time()
     # Check that mask and chunk_idx_mask are in same space
-    same_size = (
-        (image.get_data(mask) == 1) == (image.get_data(chunk_idx_mask) > 0)
-    ).all
+    if ".nii" in chunk_idx_mask:
+        image_type = "volume"
+    elif ".gii" in chunk_idx_mask:
+        image_type = "surface"
+    else:
+        raise TypeError("Chunk Index file is not .nii or .gii.")
+    if image_type == "volume":
+        same_size = (
+            (image.get_data(mask) == 1) == (image.get_data(chunk_idx_mask) > 0)
+        ).all
+    elif image_type == "surface":
+        same_size = (
+            (nib.load(mask).agg_data() == 1)
+            == (nib.load(chunk_idx_mask).agg_data() > 0)
+        ).all
     assert same_size, "Binary mask and chunk idx mask do not match!"
-    masker = tools.NiftiMasker(mask)
-    brain_size = int(np.sum(image.get_data(mask)))
+
+    if image_type == "volume":
+        masker = tools.NiftiMasker(mask)
+        brain_size = int(np.sum(image.get_data(mask)))
+    elif image_type == "surface":
+        masker = surface.GiftiMasker(mask)
+        brain_size = int(np.sum(nib.load(mask).agg_data()))
 
     # Get list of connectome files
     connectome_files_norms = natsorted(
@@ -261,20 +281,21 @@ def precomputed_connectome_fc_chunk(
         print(f"Found {len(connectome_files)} connectome subjects!")
 
     # Get binary chunk roi in brain-space
-    chunk_roi = masker.transform(
-        image.math_img(f"img == {chunk_idx}", img=chunk_idx_mask)
-    )
+    chunk_roi = masker.transform(chunk_idx_mask) == chunk_idx
     chunk_size = int(np.sum(chunk_roi))
+
     # Initialize Welford Maps
     count = 0
     mean = np.zeros((brain_size, chunk_size), dtype=np.float32)
     M2 = np.zeros((brain_size, chunk_size), dtype=np.float32)
+
     # For each connectome subject
     for connectome_file in tqdm(connectome_files):
         # Calculate Fz maps from a connectome subject
         fz_welford = make_fz_maps(connectome_file, chunk_roi)
         # Update Welford Maps
         count, mean, M2 = welford_update_map(count, mean, M2, fz_welford)
+
     # Finalize Welford Maps and output to file
     print("Outputting Chunk to disk...")
     make_stat_maps(count, mean, M2, output_dir, chunk_idx)
@@ -290,35 +311,55 @@ def precomputed_connectome_combo_chunk(
     Parameters
     ----------
     mask : str
-        Path to binary mask.
+        Path to binary mask (.nii or .gii).
     chunk_idx_mask : str
-        Path to mask containing voxel-wise chunk labels.
+        Path to mask containing voxel-wise chunk labels (.nii or .gii).
     chunk_idx : int
         Index of chunk to process.
     connectome_dir : str
-        Path to individual subject connectome files.
+        Path to individual subject connectome files (dir containing .npy).
     output_dir : str
         Path to output directory.
 
     """
     start = time.time()
     # Check that mask and chunk_idx_mask are in same space
-    same_size = (
-        (image.get_data(mask) == 1) == (image.get_data(chunk_idx_mask) > 0)
-    ).all
+    if ".nii" in chunk_idx_mask:
+        image_type = "volume"
+    elif ".gii" in chunk_idx_mask:
+        image_type = "surface"
+    else:
+        raise TypeError("Chunk Index file is not .nii or .gii.")
+    if image_type == "volume":
+        same_size = (
+            (image.get_data(mask) == 1) == (image.get_data(chunk_idx_mask) > 0)
+        ).all
+    elif image_type == "surface":
+        same_size = (
+            (nib.load(mask).agg_data() == 1)
+            == (nib.load(chunk_idx_mask).agg_data() > 0)
+        ).all
     assert same_size, "Binary mask and chunk idx mask do not match!"
-    masker = tools.NiftiMasker(mask)
-    brain_size = int(np.sum(image.get_data(mask)))
+
+    if image_type == "volume":
+        masker = tools.NiftiMasker(mask)
+        brain_size = int(np.sum(image.get_data(mask)))
+    elif image_type == "surface":
+        masker = surface.GiftiMasker(mask)
+        brain_size = int(np.sum(nib.load(mask).agg_data()))
+
+    # Get list of connectome files
     connectome_files = natsorted(glob(os.path.join(connectome_dir, "*[!_norms].npy")))
     if len(connectome_files) == 0:
         raise ValueError("No connectome files found")
     else:
         print(f"Found {len(connectome_files)} connectome subjects!")
+
     # Get binary chunk roi in brain-space
-    chunk_roi = masker.transform(
-        image.math_img(f"img == {chunk_idx}", img=chunk_idx_mask)
-    )
+    chunk_roi = masker.transform(chunk_idx_mask) == chunk_idx
     chunk_size = int(np.sum(chunk_roi))
+
+    # For each connectome subject aggregate to combo chunk
     agg_combo_chunk = np.zeros((chunk_size, brain_size), dtype=np.float32)
     for subject in tqdm(connectome_files):
         bold = np.load(subject).astype(np.float32)
@@ -330,6 +371,8 @@ def precomputed_connectome_combo_chunk(
         )
         chunk_bold = bold[:, chunk_roi.astype(bool)]
         agg_combo_chunk = make_combo_chunk(agg_combo_chunk, chunk_bold, bold)
+
+    # Save to file
     Path(os.path.join(output_dir, "Combo")).mkdir(parents=True, exist_ok=True)
     output_dir = os.path.join(
         os.path.abspath(output_dir), "Combo", f"{chunk_idx}_Combo.npy"
@@ -347,9 +390,9 @@ def precomputed_connectome_weighted_masks(
     Parameters
     ----------
     mask : str
-        Path to binary mask.
+        Path to binary mask (.nii or .gii).
     connectome_dir : str
-        Path to individual subject connectome files.
+        Path to individual subject connectome files (dir containing .npy).
     output_dir : str
         Path to output directory.
     connectome_name : str, default None
@@ -357,15 +400,32 @@ def precomputed_connectome_weighted_masks(
 
     """
     start = time.time()
-    masker = tools.NiftiMasker(mask)
-    brain_size = int(np.sum(image.get_data(mask)))
+
+    # Get image type and load masker
+    if ".nii" in mask:
+        image_type = "volume"
+    elif ".gii" in mask:
+        image_type = "surface"
+    else:
+        raise TypeError("Chunk Index file is not .nii or .gii.")
+    if image_type == "volume":
+        masker = tools.NiftiMasker(mask)
+        brain_size = int(np.sum(image.get_data(mask)))
+    elif image_type == "surface":
+        masker = surface.GiftiMasker(mask)
+        brain_size = int(np.sum(nib.load(mask).agg_data()))
+
     connectome_dir = os.path.abspath(connectome_dir)
     output_dir = os.path.abspath(output_dir)
+
+    # Load connectome subjects
     connectome_files = natsorted(glob(os.path.join(connectome_dir, "*[!_norms].npy")))
     if len(connectome_files) == 0:
         raise ValueError("No connectome files found")
     else:
         print(f"Found {len(connectome_files)} connectome subjects!")
+
+    # For each connectome subject, compute contribution to norm mask
     agg_norm_square = np.zeros(brain_size, dtype=np.float32)
     timesteps = 0
     for subject in tqdm(connectome_files):
@@ -380,10 +440,16 @@ def precomputed_connectome_weighted_masks(
         timesteps += bold.shape[0]
     if connectome_name == "":
         connectome_name = os.path.basename(connectome_dir)
+    if image_type == "volume":
+        extension = ".nii.gz"
+    elif image_type == "surface":
+        extension = ".gii"
     norm_fname = os.path.join(
-        output_dir, f"{connectome_name}_norm_weighted_mask.nii.gz"
+        output_dir, f"{connectome_name}_norm_weighted_mask" + extension
     )
-    std_fname = os.path.join(output_dir, f"{connectome_name}_std_weighted_mask.nii.gz")
+    std_fname = os.path.join(
+        output_dir, f"{connectome_name}_std_weighted_mask" + extension
+    )
     norm_mask = sqrt(agg_norm_square)
     masker.inverse_transform(norm_mask).to_filename(norm_fname)
     print(f"Output norm weighted mask to: {norm_fname}")
