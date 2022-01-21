@@ -4,9 +4,10 @@ Tools to perform Lesion Network Mapping with the Precomputed Connectome
 """
 import os
 import numpy as np
+import nibabel as nib
 from numba import jit
 from nilearn import image
-from pfctoolkit import tools, datasets
+from pfctoolkit import tools, datasets, surface
 
 
 def process_chunk(chunk, rois, config):
@@ -33,10 +34,19 @@ def process_chunk(chunk, rois, config):
         "t": config.get("t"),
         "combo": config.get("combo"),
     }
-    brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
-    chunk_masker = tools.NiftiMasker(
-        image.math_img(f"img=={chunk}", img=config.get("chunk_idx"))
-    )
+    image_type = config.get("type")
+    if image_type == "volume":
+        brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+        chunk_masker = tools.NiftiMasker(
+            image.math_img(f"img=={chunk}", img=config.get("chunk_idx"))
+        )
+    elif image_type == "surface":
+        brain_masker = surface.GiftiMasker(datasets.get_img(config.get("mask")))
+        chunk_masker = surface.GiftiMasker(
+            surface.new_gifti_image(
+                datasets.get_img(config.get("chunk_idx")).agg_data() == chunk
+            )
+        )
     brain_weights = np.array([brain_masker.transform(roi) for roi in rois])
     chunk_weights = np.array([chunk_masker.transform(roi) for roi in rois])
     brain_masks = np.array([(weights != 0) for weights in brain_weights])
@@ -142,7 +152,13 @@ def publish_atlas(atlas, output_dir, config):
 
     """
     output_dir = os.path.abspath(output_dir)
-    brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+    image_type = config.get("type")
+    if image_type == "volume":
+        brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+        extension = ".nii.gz"
+    elif image_type == "surface":
+        brain_masker = surface.GiftiMasker(datasets.get_img(config.get("mask")))
+        extension = ".gii"
     for roi in atlas:
         atlas[roi]["denominator"] = final_denominator(atlas[roi]["denominator"])
         atlas[roi]["avgr"] = atlas[roi]["avgr"] / atlas[roi]["network_weight"]
@@ -151,7 +167,7 @@ def publish_atlas(atlas, output_dir, config):
         scaling_factor = atlas[roi]["numerator"] / atlas[roi]["denominator"]
         subject_name = os.path.basename(roi).split(".nii")[0]
         for map_type in [("avgr", "AvgR"), ("fz", "AvgR_Fz"), ("t", "T")]:
-            output_fname = f"{subject_name}_Precom_{map_type[1]}.nii.gz"
+            output_fname = f"{subject_name}_Precom_{map_type[1]}{extension}"
             output_path = os.path.join(output_dir, output_fname)
             atlas[roi][map_type[0]] = atlas[roi][map_type[0]] * scaling_factor
             out_img = brain_masker.inverse_transform(atlas[roi][map_type[0]])
