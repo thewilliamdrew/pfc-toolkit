@@ -14,6 +14,7 @@ pfc-toolkit requires:
 - NumPy
 - SciPy
 - Numba
+- Nibabel
 - Nilearn
 - tqdm
 - natsort
