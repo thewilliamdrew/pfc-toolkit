@@ -7,6 +7,8 @@ The project was started in 2019 by William Drew for his Harvard undergraduate th
 
 The project was supervised by Dr. Michael D. Fox, MD, PhD first at the Berenson-Allen Center for Noninvasive Brain Stimulation at Beth Israel Deaconess Medical Center and later at the Center for Brain Circuit Therapeutics at Brigham and Women's Hospital.
 
+The Precomputed Functional Connectome Toolkit is for research only; please do not use results from PFC Toolkit for clinical decisions.
+
 ## Installation
 ### Dependencies
 pfc-toolkit requires:
