@@ -53,7 +53,7 @@ def get_extrema(radius_len, home_coords, XMAX, YMAX, ZMAX):
     ----------
     radius_len : int
         Radius to expand search area around home coordinates.
-    home_coords : (int, int, int)
+    home_coords : tuple of int
         X/Y/Z coordinates of center of search region.
     XMAX : int
         Maximum X-coordinate.
@@ -64,7 +64,7 @@ def get_extrema(radius_len, home_coords, XMAX, YMAX, ZMAX):
 
     Returns
     -------
-    xMin, xMax, yMin, yMax, zMin, zMax : (int, int, int, int, int, int)
+    xMin, xMax, yMin, yMax, zMin, zMax : tuple of int
         X/Y/Z coordinate boundaries of search region.
 
     """
@@ -86,7 +86,7 @@ def label_chunk(
     ----------
     radius_len : int
         Radius around home coordinates to search for unassigned voxels.
-    home_coords : (int, int, int)
+    home_coords : tuple of int
         X/Y/Z coordinates of home position.
     voxel_maps : ndarray
         Current state of brain volume voxel labels.
@@ -165,7 +165,7 @@ def get_next_home(voxel_maps, XMAX, YMAX, ZMAX):
 
     Returns
     -------
-    x, y, z : int, int, int
+    x, y, z : tuple of int
         X/Y/Z coordinates of next home location.
 
     """

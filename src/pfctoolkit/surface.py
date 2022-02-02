@@ -12,12 +12,12 @@ from pfctoolkit import datasets
 class GiftiMasker:
     def __init__(self, mask_img):
         """
+
         Parameters
         ----------
         mask_img : Giimg-like object
-            If str, path to binary gifti mask.
-            If giftiimg, gifti image object.
-            Assumes the gifti only contains a single 1-D data array.
+            If str, path to binary gifti mask. If giftiimg, gifti image object. Assumes
+            the gifti only contains a single 1-D data array.
 
         """
         if type(mask_img) == str:
@@ -30,19 +30,18 @@ class GiftiMasker:
         self.mask_size = np.prod(self.mask_shape)
 
     def transform(self, giimg=None, weight=False):
-        """Masks Gifti file into 1D array. Retypes to float32
+        """Masks Gifti file into 1D array. Retypes to float32.
+
         Parameters
         ----------
         giimg : Giimg-like object
-            If string, consider it as a path to GIfTI image and call
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home
-            folder. If it is an object, check if affine attribute is present,
-            raise `TypeError` otherwise.
-            If ndarray, consider it as a gifti data array.
-
+            If string, consider it as a path to GIfTI image and call `nibabel.load()` on
+            it. The '~' symbol is expanded to the user home folder. If it is an object,
+            check if affine attribute is present, raise `TypeError` otherwise. If
+            ndarray, consider it as a gifti data array.
         weight : bool, default False
-            If True, transform the niimg with weighting. If False, transform the
-            niimg without weighting.
+            If True, transform the niimg with weighting. If False, transform the niimg
+            without weighting.
 
         Returns
         -------
@@ -64,6 +63,7 @@ class GiftiMasker:
 
     def inverse_transform(self, flat_giimg=None):
         """Unmasks 1D array into 3D Gifti file. Retypes to float32.
+
         Parameters
         ----------
         flat_giimg : numpy.ndarray
@@ -81,13 +81,13 @@ class GiftiMasker:
 
     def mask(self, giimg=None):
         """Masks 3D Gifti file into Masked Gifti file.
+
         Parameters
         ----------
         giimg : Giimg-like object
-            If string, consider it as a path to GIfTI image and call
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home
-            folder. If it is an object, check if affine attribute is present,
-            raise `TypeError` otherwise.
+            If string, consider it as a path to GIfTI image and call `nibabel.load()` on
+            it. The '~' symbol is expanded to the user home folder. If it is an object,
+            check if affine attribute is present, raise `TypeError` otherwise.
 
         Returns
         -------
@@ -106,33 +106,28 @@ def new_gifti_image(data, intent=0, datatype=16, metadata=None):
     data : ndarray
         1-D ndarray containing one hemisphere surface data.
     intent : int
-        Intent code for Gifti File. Defaults to 0 (Intent = NONE).
-
-        Available intent codes:
-            NIFTI_INTENT_NONE - 0
-            NIFTI_INTENT_CORREL - 2
-            NIFTI_INTENT_TTEST - 3
-            NIFTI_INTENT_ZSCORE - 5
-            NIFTI_INTENT_PVAL - 22
-            NIFTI_INTENT_LOGPVAL - 23
-            NIFTI_INTENT_LOG10PVAL - 24
-            NIFTI_INTENT_LABEL - 1002
-            NIFTI_INTENT_POINTSET - 1008
-            NIFTI_INTENT_TRIANGLE - 1009
-            NIFTI_INTENT_TIME_SERIES - 2001
-            NIFTI_INTENT_NODE_INDEX - 2002
-            NIFTI_INTENT_SHAPE - 2005
-
+        Intent code for Gifti File. Defaults to 0 (Intent = NONE).\n
+        Available intent codes:\n
+        NIFTI_INTENT_NONE - 0\n
+        NIFTI_INTENT_CORREL - 2\n
+        NIFTI_INTENT_TTEST - 3\n
+        NIFTI_INTENT_ZSCORE - 5\n
+        NIFTI_INTENT_PVAL - 22\n
+        NIFTI_INTENT_LOGPVAL - 23\n
+        NIFTI_INTENT_LOG10PVAL - 24\n
+        NIFTI_INTENT_LABEL - 1002\n
+        NIFTI_INTENT_POINTSET - 1008\n
+        NIFTI_INTENT_TRIANGLE - 1009\n
+        NIFTI_INTENT_TIME_SERIES - 2001\n
+        NIFTI_INTENT_NODE_INDEX - 2002\n
+        NIFTI_INTENT_SHAPE - 2005\n
         More intent codes can be found at: https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html
-
     datatype : int
-        Datatype for gifti image. Defaults to 16 (dtype = float32)
-
-        Available datatypes:
-            UINT8 - 2
-            INT32 - 8
-            FLOAT32 - 16
-
+        Datatype for gifti image. Defaults to 16 (dtype = float32)\n
+        Available datatypes:\n
+        UINT8 - 2\n
+        INT32 - 8\n
+        FLOAT32 - 16\n
     metadata : dict
         Dictionary of metadata for gifti image.
 
@@ -153,32 +148,25 @@ def new_gifti_image(data, intent=0, datatype=16, metadata=None):
 
 def concat_hemispheres_to_csv(gifti_paths, output_dir="", mask=""):
     """Concatenate a list of giftis together into a csv to construct a data matrix for
-       use with PALM. Assumes that input giftis contain a single 1-D data array with
-       functional/statistical data for surface mesh vertices.
+    use with PALM. Assumes that input giftis contain a single 1-D data array with
+    functional/statistical data for surface mesh vertices.
 
     Parameters
     ----------
     gifti_paths : str
         Path to a two-column CSV of paths to giftis where each row corresponds to a
         subject, the first column corresponds to the subject's Left Hemisphere ROI mask,
-        and the second column corresponds to the subject's Right Hemisphere ROI mask.
-
-            Format:
-                /path/to/subject1/lh_roi.nii.gz,/path/to/subject1/rh_roi.nii.gz
-                /path/to/subject2/lh_roi.nii.gz,/path/to/subject2/rh_roi.nii.gz
-                /path/to/subject3/lh_roi.nii.gz,/path/to/subject3/rh_roi.nii.gz
-                                                .
-                                                .
-                                                .
-
+        and the second column corresponds to the subject's Right Hemisphere ROI mask.\n
+        CSV Format:\n
+        /path/to/subject1/lh_roi.nii.gz,/path/to/subject1/rh_roi.nii.gz\n
+        /path/to/subject2/lh_roi.nii.gz,/path/to/subject2/rh_roi.nii.gz\n
+        /path/to/subject3/lh_roi.nii.gz,/path/to/subject3/rh_roi.nii.gz\n
     output_dir : str, optional
         Output directory, by default "". If not specified, generated data matrix csv
         will be output to same directory as input csv.
-
-    mask : str, optional
-        Mask name (from nimlab.datasets). Defaults to no masking.
-        Options:
-            fs5_mask - fsaverage5 mask from Ryan Darby ADNI data
+    mask : str, {'fs5_mask'}, optional
+        Mask name (from nimlab.datasets). Defaults to no masking. The provided
+        fsaverage5 mask is created from Ryan Darby's ADNI data.
 
     """
     roi_files = []

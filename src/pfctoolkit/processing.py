@@ -40,41 +40,64 @@ def extract_chunk_signals(connectome_mat, roi_mat):
 
 @jit(nopython=True)
 def dot(a, b):
+    """Compute the dot product of `a` and b`"""
     return np.dot(a, b)
 
 
 @jit(nopython=True)
 def divide(a, b):
+    """Compute the quotient of `a` and `b`."""
     return np.divide(a, b)
 
 
 @jit(nopython=True)
 def arctanh(a):
+    """Compute the hyperbolic arctangent."""
     return np.arctanh(a)
 
 
 @jit(nopython=True)
 def tanh(a):
+    """Compute the tangent."""
     return np.tanh(a)
 
 
 @jit(nopython=True)
 def subtract(a, b):
+    """Compute the difference between `a` and `b`."""
     return np.subtract(a, b)
 
 
 @jit(nopython=True)
 def multiply(a, b):
+    """Compute the product of `a` and `b`."""
     return np.multiply(a, b)
 
 
 @jit(nopython=True)
 def sqrt(a):
+    """Compute the square root."""
     return np.sqrt(a)
 
 
 @jit(nopython=True)
 def make_combo_chunk(agg_combo_chunk, chunk_bold, bold):
+    """Compute a step of a combo chunk.
+
+    Parameters
+    ----------
+    agg_combo_chunk : ndarray
+        Aggregate Combo chunk.
+    chunk_bold : ndarray
+        Chunk masked BOLD signal.
+    bold : ndarray
+        Whole brain BOLD signal.
+
+    Returns
+    -------
+    ndarray
+        Next step of the aggregate combo chunk calculation.
+    """
     return np.add(agg_combo_chunk, np.dot(chunk_bold.T, bold))
 
 
