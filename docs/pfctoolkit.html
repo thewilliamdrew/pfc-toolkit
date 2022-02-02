@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pfctoolkit package &mdash; pfc-toolkit 0.0.8 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pfc-toolkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">pfctoolkit package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.chunker">pfctoolkit.chunker module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.config">pfctoolkit.config module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.datasets">pfctoolkit.datasets module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.mapping">pfctoolkit.mapping module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.processing">pfctoolkit.processing module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.surface">pfctoolkit.surface module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit.tools">pfctoolkit.tools module</a></li>
+<li><a class="reference internal" href="#module-pfctoolkit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pfc-toolkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>pfctoolkit package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pfctoolkit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pfctoolkit-package">
+<h1>pfctoolkit package<a class="headerlink" href="#pfctoolkit-package" title="Permalink to this headline"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pfctoolkit.configs.html">pfctoolkit.configs package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pfctoolkit.configs.html#module-pfctoolkit.configs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pfctoolkit.data.html">pfctoolkit.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pfctoolkit.data.html#module-pfctoolkit.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-pfctoolkit.chunker">
+<span id="pfctoolkit-chunker-module"></span><h2>pfctoolkit.chunker module<a class="headerlink" href="#module-pfctoolkit.chunker" title="Permalink to this headline"></a></h2>
+<p>Utilities to generate chunk masks used in the Precomputed Connectome</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.generate_chunk_mask">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">generate_chunk_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_chunks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.generate_chunk_mask" title="Permalink to this definition"></a></dt>
+<dd><p>Generate chunk index mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>niimg-like object</em>) – Binary brain volume niimg to divide into chunks</p></li>
+<li><p><strong>num_chunks</strong> (<em>int</em>) – Number of chunks to divide brain volume into.</p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em>) – Number of voxels in each chunk.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory to save chunk index mask to.</p></li>
+<li><p><strong>radius</strong> (<em>int</em><em>, </em><em>optional</em>) – Radius to search for unassigned voxels, by default 20.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.get_distances">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">get_distances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.get_distances" title="Permalink to this definition"></a></dt>
+<dd><p>Get Manhattan distances of voxels to home coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>home_coords</strong> (<em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em>) – X/Y/Z coordinates of center of search region.</p></li>
+<li><p><strong>locations</strong> (<em>ndarray</em>) – 2D array of X/Y/Z coordinates of voxels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>distances</strong> – Cityblock distances of voxels to home coordinates.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.get_extrema">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">get_extrema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">home_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZMAX</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.get_extrema" title="Permalink to this definition"></a></dt>
+<dd><p>Get new boundaries of search area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius_len</strong> (<em>int</em>) – Radius to expand search area around home coordinates.</p></li>
+<li><p><strong>home_coords</strong> (<em>tuple of int</em>) – X/Y/Z coordinates of center of search region.</p></li>
+<li><p><strong>XMAX</strong> (<em>int</em>) – Maximum X-coordinate.</p></li>
+<li><p><strong>YMAX</strong> (<em>int</em>) – Maximum Y-coordinate.</p></li>
+<li><p><strong>ZMAX</strong> (<em>int</em>) – Maximum Z-coordinate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>xMin, xMax, yMin, yMax, zMin, zMax</strong> – X/Y/Z coordinate boundaries of search region.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.get_locations">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">get_locations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.get_locations" title="Permalink to this definition"></a></dt>
+<dd><p>Get coords of unassigned voxels in search area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>volume</strong> (<em>ndarray</em>) – Volume to search for unassigned voxels. Unassigned voxels have value 1.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>locations</strong> – 2D array of X/Y/Z coordinates of unassigned voxels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.get_next_home">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">get_next_home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voxel_maps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZMAX</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.get_next_home" title="Permalink to this definition"></a></dt>
+<dd><p>Get the next home coordinates from a current voxel-mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxel_maps</strong> (<em>ndarray</em>) – Volume containing voxel-index mapping to chunks.</p></li>
+<li><p><strong>XMAX</strong> (<em>int</em>) – Maximum X-coordinate.</p></li>
+<li><p><strong>YMAX</strong> (<em>int</em>) – Maximum Y-coordinate.</p></li>
+<li><p><strong>ZMAX</strong> (<em>int</em>) – Maximum Z-coordinate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>x, y, z</strong> – X/Y/Z coordinates of next home location.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.chunker.label_chunk">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.chunker.</span></span><span class="sig-name descname"><span class="pre">label_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">home_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voxel_maps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZMAX</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.chunker.label_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Label voxels with chunk index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius_len</strong> (<em>int</em>) – Radius around home coordinates to search for unassigned voxels.</p></li>
+<li><p><strong>home_coords</strong> (<em>tuple of int</em>) – X/Y/Z coordinates of home position.</p></li>
+<li><p><strong>voxel_maps</strong> (<em>ndarray</em>) – Current state of brain volume voxel labels.</p></li>
+<li><p><strong>chunk_label</strong> (<em>int</em>) – Chunk index to label assigned voxels with.</p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em>) – Number of voxels in a chunk.</p></li>
+<li><p><strong>XMAX</strong> (<em>int</em>) – Maximum X-coordinate.</p></li>
+<li><p><strong>YMAX</strong> (<em>int</em>) – Maximum Y-coordinate.</p></li>
+<li><p><strong>ZMAX</strong> (<em>int</em>) – Maximum Z-coordinate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>voxel_maps</strong> – State of brain volume voxel labels after adding the latest chunk.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.config">
+<span id="pfctoolkit-config-module"></span><h2>pfctoolkit.config module<a class="headerlink" href="#module-pfctoolkit.config" title="Permalink to this headline"></a></h2>
+<p>Configuration objects to facilitate using the Precomputed Connectome.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pfctoolkit.config.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pfctoolkit.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.config.Config" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.config.Config.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.config.Config.check" title="Permalink to this definition"></a></dt>
+<dd><p>Check that all resources specified in config file are accessible and exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>If True, then all resources specified in config file are accessible and
+exist.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.config.Config.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.config.Config.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get value in config specified by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Key of value to retrieve from config.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value of Key in config.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.config.Config.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.config.Config.get_config" title="Permalink to this definition"></a></dt>
+<dd><p>Get config as dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Configuration as dict.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.datasets">
+<span id="pfctoolkit-datasets-module"></span><h2>pfctoolkit.datasets module<a class="headerlink" href="#module-pfctoolkit.datasets" title="Permalink to this headline"></a></h2>
+<p>Datasets used with the Precomputed Connectome</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.datasets.get_img">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.datasets.</span></span><span class="sig-name descname"><span class="pre">get_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.datasets.get_img" title="Permalink to this definition"></a></dt>
+<dd><p>Get a standard image file as a Niimg</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ds</strong> (<em>str</em>) – <p>Name of image to get.</p>
+<p>Volume Masks:</p>
+<p>”MNI152_T1_2mm_brain”</p>
+<p>”MNI152_T1_2mm_brain_mask”</p>
+<p>”MNI152_T1_2mm_brain_mask_dil”</p>
+<p>”MNI152_T1_1mm_brain”</p>
+<p>”MNI152_T1_1mm_brain_mask”</p>
+<p>”MNI152_T1_1mm_brain_mask_dil”</p>
+<p>Surface Masks:</p>
+<p>”fs5_mask”</p>
+<p>”fs5_mask_lh”</p>
+<p>”fs5_mask_rh”</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Niimg-like object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.datasets.get_img_path">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.datasets.</span></span><span class="sig-name descname"><span class="pre">get_img_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.datasets.get_img_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get a standard image file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ds</strong> (<em>str</em>) – <p>Name of image to get path of.</p>
+<p>Volume Masks</p>
+<p>”MNI152_T1_2mm_brain”</p>
+<p>”MNI152_T1_2mm_brain_mask”</p>
+<p>”MNI152_T1_2mm_brain_mask_dil”</p>
+<p>”MNI152_T1_1mm_brain”</p>
+<p>”MNI152_T1_1mm_brain_mask”</p>
+<p>”MNI152_T1_1mm_brain_mask_dil”</p>
+<p>Surface Masks</p>
+<p>”fs5_mask”</p>
+<p>”fs5_mask_lh”</p>
+<p>”fs5_mask_rh”</p>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Path to image.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.mapping">
+<span id="pfctoolkit-mapping-module"></span><h2>pfctoolkit.mapping module<a class="headerlink" href="#module-pfctoolkit.mapping" title="Permalink to this headline"></a></h2>
+<p>Tools to perform Lesion Network Mapping with the Precomputed Connectome</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.compute_chunk_masks">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">compute_chunk_masks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_weight</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.compute_chunk_masks" title="Permalink to this definition"></a></dt>
+<dd><p>Compute weighted chunk masks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chunk_weights</strong> (<em>ndarray</em>) – Chunk-masked weighted ROIs.</p></li>
+<li><p><strong>norm_weight</strong> (<em>ndarray</em>) – Chunk-masked voxel BOLD norms.</p></li>
+<li><p><strong>std_weight</strong> (<em>ndarray</em>) – Chunk-masked voxel BOLD standard deviations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>norm_weighted_chunk_masks</strong> (<em>ndarray</em>) – ROI chunk masks weighted with BOLD norms.</p></li>
+<li><p><strong>std_weighted_chunk_masks</strong> (<em>ndarray</em>) – ROI chunk masks weighted with BOLD standard deviations.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.compute_denominator">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">compute_denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brain_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brain_masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.compute_denominator" title="Permalink to this definition"></a></dt>
+<dd><p>Compute denominator contribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brain_weights</strong> (<em>ndarray</em>) – Brain-masked weighted ROIs.</p></li>
+<li><p><strong>chunk_weights</strong> (<em>ndarray</em>) – Chunk-masked weighted ROIs.</p></li>
+<li><p><strong>brain_masks</strong> (<em>ndarray</em>) – Brain-masked unweighted ROIs.</p></li>
+<li><p><strong>chunk_masks</strong> (<em>ndarray</em>) – Chunk-masked unweighted ROIs.</p></li>
+<li><p><strong>chunk_data</strong> (<em>ndarray</em>) – Chunk data.</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Index of processed ROI.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>denominator</strong> – Contribution to denominator.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.compute_network_maps">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">compute_network_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">std_chunk_masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.compute_network_maps" title="Permalink to this definition"></a></dt>
+<dd><p>Compute network maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>std_chunk_masks</strong> (<em>ndarray</em>) – Chunk-masked ROIs weighted by BOLD standard deviation.</p></li>
+<li><p><strong>chunk_data</strong> (<em>ndarray</em>) – Chunk data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>network maps</strong> – Network map contributions from chunk.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.compute_network_weights">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">compute_network_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">std_chunk_masks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.compute_network_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Compute network weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>std_chunk_masks</strong> (<em>ndarray</em>) – Chunk-masked ROIs weighted by BOLD standard deviation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>network_weights</strong> – Contribution to total network map weights.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.compute_numerator">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">compute_numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm_chunk_masks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.compute_numerator" title="Permalink to this definition"></a></dt>
+<dd><p>Compute numerator contribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>norm_chunk_masks</strong> (<em>ndarray</em>) – ROI chunk masks weighted with BOLD norms.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>numerator</strong> – Numerator contribution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.final_denominator">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">final_denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">denominator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.final_denominator" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.process_chunk">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">process_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rois</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.process_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Compute chunk contribution to FC maps for a given list of ROIs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chunk</strong> (<em>int</em>) – Index of chunk to be processed.</p></li>
+<li><p><strong>rois</strong> (<em>list of str</em>) – List of ROI paths to be processed.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#pfctoolkit.config.Config" title="pfctoolkit.config.Config"><em>pfctoolkit.config.Config</em></a>) – Configuration of the precomputed connectome.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>contributions</strong> – Dictionary containing contributions to network maps.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict of ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.publish_atlas">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">publish_atlas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atlas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.publish_atlas" title="Permalink to this definition"></a></dt>
+<dd><p>Runs final computation on the atlas and outputs network maps to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atlas</strong> (<em>dict</em>) – dict containing in-progress FC maps and scaling factor accumulators.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Output directory.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#pfctoolkit.config.Config" title="pfctoolkit.config.Config"><em>pfctoolkit.config.Config</em></a>) – Configuration of the precomputed connectome.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.mapping.update_atlas">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.mapping.</span></span><span class="sig-name descname"><span class="pre">update_atlas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atlas</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.mapping.update_atlas" title="Permalink to this definition"></a></dt>
+<dd><p>Update atlas with chunk contributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contribution</strong> (<em>dict</em>) – dict containing FC and scaling factor contributions from a chunk.</p></li>
+<li><p><strong>atlas</strong> (<em>dict</em>) – dict containing in-progress FC maps and scaling factor accumulators.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>atlas</strong> – Updated dict containing in-progress FC maps and scaling factor
+accumulators following consolidation of the contribution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.processing">
+<span id="pfctoolkit-processing-module"></span><h2>pfctoolkit.processing module<a class="headerlink" href="#module-pfctoolkit.processing" title="Permalink to this headline"></a></h2>
+<p>Tools to generate a Precomputed Functional Connectome.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.arctanh">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">arctanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.arctanh" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the hyperbolic arctangent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.calculate_norm_square">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">calculate_norm_square</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agg_norm_square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.calculate_norm_square" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate norm square.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>agg_norm_square</strong> (<em>ndarray</em>) – Aggregate norm square vector.</p></li>
+<li><p><strong>bold</strong> (<em>ndarray</em>) – BOLD array from a subject to be incorporated into the aggregate norm
+square vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>agg_norm_square</strong> – Aggregate norm square vector with contribution from BOLD subject.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.divide">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">divide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.divide" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the quotient of <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.dot">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.dot" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the dot product of <cite>a</cite> and b`</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.extract_chunk_signals">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">extract_chunk_signals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connectome_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi_mat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.extract_chunk_signals" title="Permalink to this definition"></a></dt>
+<dd><p>Extract Chunk TC Signal from a connectome subject.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connectome_mat</strong> (<em>ndarray</em>) – Connectome subject TC matrix.</p></li>
+<li><p><strong>roi_mat</strong> (<em>ndarray</em>) – Chunk ROI binary mask</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>roi_masked_tc</strong> – TC signals extracted from connectome TC according to ROI binary mask</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.make_combo_chunk">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">make_combo_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agg_combo_chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_bold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.make_combo_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Compute a step of a combo chunk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>agg_combo_chunk</strong> (<em>ndarray</em>) – Aggregate Combo chunk.</p></li>
+<li><p><strong>chunk_bold</strong> (<em>ndarray</em>) – Chunk masked BOLD signal.</p></li>
+<li><p><strong>bold</strong> (<em>ndarray</em>) – Whole brain BOLD signal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Next step of the aggregate combo chunk calculation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.make_fz_maps">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">make_fz_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connectome_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi_mat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.make_fz_maps" title="Permalink to this definition"></a></dt>
+<dd><p>Make Fz Maps for a chunk ROI and a connectome subject.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connectome_files</strong> (<em>(</em><em>str</em><em>, </em><em>str</em><em>)</em>) – Tuple of paths for connectome subject TC matrix and TC norm vector.</p></li>
+<li><p><strong>roi_mat</strong> (<em>ndarray</em>) – Brain-masked binary chunk ROI with shape (&lt;size of brain&gt;,)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.make_stat_maps">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">make_stat_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.make_stat_maps" title="Permalink to this definition"></a></dt>
+<dd><p>Generate statistical maps from welford maps and output to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>count</strong> (<em>int</em>) – Number of connectome subjects.</p></li>
+<li><p><strong>mean</strong> (<em>ndarray</em>) – Welford Mean array.</p></li>
+<li><p><strong>M2</strong> (<em>ndarray</em>) – Welford M2 array.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Path to output directory.</p></li>
+<li><p><strong>chunk_idx</strong> (<em>int</em>) – Chunk index number being processed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.multiply">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">multiply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.multiply" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the product of <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.precomputed_connectome_combo_chunk">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">precomputed_connectome_combo_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_idx_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectome_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.precomputed_connectome_combo_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a precomputed connectome combo chunk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>str</em>) – Path to binary mask (.nii or .gii).</p></li>
+<li><p><strong>chunk_idx_mask</strong> (<em>str</em>) – Path to mask containing voxel-wise chunk labels (.nii or .gii).</p></li>
+<li><p><strong>chunk_idx</strong> (<em>int</em>) – Index of chunk to process.</p></li>
+<li><p><strong>connectome_dir</strong> (<em>str</em>) – Path to individual subject connectome files (dir containing .npy).</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Path to output directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.precomputed_connectome_fc_chunk">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">precomputed_connectome_fc_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_idx_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectome_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.precomputed_connectome_fc_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a precomputed connectome FC map chunk (AvgR/Fz/T).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>str</em>) – Path to binary mask (.nii or .gii).</p></li>
+<li><p><strong>chunk_idx_mask</strong> (<em>str</em>) – Path to mask containing voxel-wise chunk labels (.nii or .gii).</p></li>
+<li><p><strong>chunk_idx</strong> (<em>int</em>) – Index of chunk to process.</p></li>
+<li><p><strong>connectome_dir</strong> (<em>str</em>) – Path to individual subject connectome files (dir containing .npy).</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Path to output directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.precomputed_connectome_weighted_masks">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">precomputed_connectome_weighted_masks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectome_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectome_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.precomputed_connectome_weighted_masks" title="Permalink to this definition"></a></dt>
+<dd><p>Generate the precomputed connectome norm and stdev weighted masks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>str</em>) – Path to binary mask (.nii or .gii).</p></li>
+<li><p><strong>connectome_dir</strong> (<em>str</em>) – Path to individual subject connectome files (dir containing .npy).</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Path to output directory.</p></li>
+<li><p><strong>connectome_name</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of connectome to use for mask naming. If None, use connectome_dir</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.sqrt">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">sqrt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.sqrt" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the square root.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.subtract">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.subtract" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the difference between <cite>a</cite> and <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.tanh">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.tanh" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the tangent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.welford_finalize_map">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">welford_finalize_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.welford_finalize_map" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a Welford map into maps of arrays containing the statistics
+[mean, variance, sampleVariancce].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>count</strong> (<em>int</em>) – Welford counter.</p></li>
+<li><p><strong>mean</strong> (<em>ndarray</em>) – Welford Mean array.</p></li>
+<li><p><strong>M2</strong> (<em>ndarray</em>) – Welford M2 array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of Welford means and sample variances.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray, ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.processing.welford_update_map">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.processing.</span></span><span class="sig-name descname"><span class="pre">welford_update_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newMap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.processing.welford_update_map" title="Permalink to this definition"></a></dt>
+<dd><p>Update a Welford map with data from a new map. See
+<a class="reference external" href="https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm">https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford’s_online_algorithm</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>count</strong> (<em>int</em>) – Welford counter.</p></li>
+<li><p><strong>mean</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>&lt;brain size&gt;</em><em>, </em><em>&lt;ROI size&gt;</em><em>)</em>) – Mean aggregate.</p></li>
+<li><p><strong>M2</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>&lt;brain size&gt;</em><em>, </em><em>&lt;ROI size&gt;</em><em>)</em>) – M2 aggregate.</p></li>
+<li><p><strong>newMap</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>&lt;brain size&gt;</em><em>, </em><em>&lt;ROI size&gt;</em><em>)</em>) – New data to incorporate into a Welford map.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>updatedAggregateMap</strong> – Updated Welford map.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.surface">
+<span id="pfctoolkit-surface-module"></span><h2>pfctoolkit.surface module<a class="headerlink" href="#module-pfctoolkit.surface" title="Permalink to this headline"></a></h2>
+<p>Tools for Surface Gifti files</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pfctoolkit.surface.GiftiMasker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pfctoolkit.surface.</span></span><span class="sig-name descname"><span class="pre">GiftiMasker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_img</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.GiftiMasker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.surface.GiftiMasker.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_giimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.GiftiMasker.inverse_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Unmasks 1D array into 3D Gifti file. Retypes to float32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flat_giimg</strong> (<em>numpy.ndarray</em>) – 1D array to unmask.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>giimg</strong> – Unmasked Gifti.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nibabel.gifti.gifti.GiftiImage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.surface.GiftiMasker.mask">
+<span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">giimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.GiftiMasker.mask" title="Permalink to this definition"></a></dt>
+<dd><p>Masks 3D Gifti file into Masked Gifti file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>giimg</strong> (<em>Giimg-like object</em>) – If string, consider it as a path to GIfTI image and call <cite>nibabel.load()</cite> on
+it. The ‘~’ symbol is expanded to the user home folder. If it is an object,
+check if affine attribute is present, raise <cite>TypeError</cite> otherwise.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>masked_giimg</strong> – Masked Gifti image.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nibabel.gifti.gifti.GiftiImage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.surface.GiftiMasker.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">giimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.GiftiMasker.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Masks Gifti file into 1D array. Retypes to float32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>giimg</strong> (<em>Giimg-like object</em>) – If string, consider it as a path to GIfTI image and call <cite>nibabel.load()</cite> on
+it. The ‘~’ symbol is expanded to the user home folder. If it is an object,
+check if affine attribute is present, raise <cite>TypeError</cite> otherwise. If
+ndarray, consider it as a gifti data array.</p></li>
+<li><p><strong>weight</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, transform the niimg with weighting. If False, transform the niimg
+without weighting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>region_signals</strong> – Masked Nifti file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.surface.concat_hemispheres_to_csv">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.surface.</span></span><span class="sig-name descname"><span class="pre">concat_hemispheres_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gifti_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.concat_hemispheres_to_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Concatenate a list of giftis together into a csv to construct a data matrix for
+use with PALM. Assumes that input giftis contain a single 1-D data array with
+functional/statistical data for surface mesh vertices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gifti_paths</strong> (<em>str</em>) – <p>Path to a two-column CSV of paths to giftis where each row corresponds to a
+subject, the first column corresponds to the subject’s Left Hemisphere ROI mask,
+and the second column corresponds to the subject’s Right Hemisphere ROI mask.</p>
+<p>CSV Format:</p>
+<p>/path/to/subject1/lh_roi.nii.gz,/path/to/subject1/rh_roi.nii.gz</p>
+<p>/path/to/subject2/lh_roi.nii.gz,/path/to/subject2/rh_roi.nii.gz</p>
+<p>/path/to/subject3/lh_roi.nii.gz,/path/to/subject3/rh_roi.nii.gz</p>
+</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory, by default “”. If not specified, generated data matrix csv
+will be output to same directory as input csv.</p></li>
+<li><p><strong>mask</strong> (<em>str</em><em>, </em><em>{'fs5_mask'}</em><em>, </em><em>optional</em>) – Mask name (from nimlab.datasets). Defaults to no masking. The provided
+fsaverage5 mask is created from Ryan Darby’s ADNI data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.surface.new_gifti_image">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.surface.</span></span><span class="sig-name descname"><span class="pre">new_gifti_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.surface.new_gifti_image" title="Permalink to this definition"></a></dt>
+<dd><p>NiBabel wrapper to generate a gifti image with data array and metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – 1-D ndarray containing one hemisphere surface data.</p></li>
+<li><p><strong>intent</strong> (<em>int</em>) – <p>Intent code for Gifti File. Defaults to 0 (Intent = NONE).</p>
+<p>Available intent codes:</p>
+<p>NIFTI_INTENT_NONE - 0</p>
+<p>NIFTI_INTENT_CORREL - 2</p>
+<p>NIFTI_INTENT_TTEST - 3</p>
+<p>NIFTI_INTENT_ZSCORE - 5</p>
+<p>NIFTI_INTENT_PVAL - 22</p>
+<p>NIFTI_INTENT_LOGPVAL - 23</p>
+<p>NIFTI_INTENT_LOG10PVAL - 24</p>
+<p>NIFTI_INTENT_LABEL - 1002</p>
+<p>NIFTI_INTENT_POINTSET - 1008</p>
+<p>NIFTI_INTENT_TRIANGLE - 1009</p>
+<p>NIFTI_INTENT_TIME_SERIES - 2001</p>
+<p>NIFTI_INTENT_NODE_INDEX - 2002</p>
+<p>NIFTI_INTENT_SHAPE - 2005</p>
+<p>More intent codes can be found at: <a class="reference external" href="https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html">https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/group__NIFTI1__INTENT__CODES.html</a></p>
+</p></li>
+<li><p><strong>datatype</strong> (<em>int</em>) – <p>Datatype for gifti image. Defaults to 16 (dtype = float32)</p>
+<p>Available datatypes:</p>
+<p>UINT8 - 2</p>
+<p>INT32 - 8</p>
+<p>FLOAT32 - 16</p>
+</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Dictionary of metadata for gifti image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Gifti image with specified metadata and data array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nibabel.gifti.gifti.GiftiImage</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit.tools">
+<span id="pfctoolkit-tools-module"></span><h2>pfctoolkit.tools module<a class="headerlink" href="#module-pfctoolkit.tools" title="Permalink to this headline"></a></h2>
+<p>Useful utilities for working with the Precomputed Connectome</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pfctoolkit.tools.</span></span><span class="sig-name descname"><span class="pre">NiftiMasker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_img</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Faster NiftiMasker.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.mask_img">
+<span class="sig-name descname"><span class="pre">mask_img</span></span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.mask_img" title="Permalink to this definition"></a></dt>
+<dd><p>Nifti binary mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>nibabel.nifti1.Nifti1Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.mask_idx">
+<span class="sig-name descname"><span class="pre">mask_idx</span></span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.mask_idx" title="Permalink to this definition"></a></dt>
+<dd><p>1D numpy.ndarray containing indexes from flattened mask image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.mask_shape">
+<span class="sig-name descname"><span class="pre">mask_shape</span></span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.mask_shape" title="Permalink to this definition"></a></dt>
+<dd><p>Shape of mask_idx.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>tuple of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.mask_size">
+<span class="sig-name descname"><span class="pre">mask_size</span></span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.mask_size" title="Permalink to this definition"></a></dt>
+<dd><p>Number of voxels in entire space, including outside the brain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_niimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.inverse_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Unmasks 1D array into 3D Nifti file. Retypes to float32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flat_niimg</strong> (<em>numpy.ndarray</em>) – 1D array to unmask.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>niimg</strong> – Unmasked Nifti.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nibabel.nifti1.Nifti1Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.mask">
+<span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">niimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.mask" title="Permalink to this definition"></a></dt>
+<dd><p>Masks 3D Nifti file into Masked 3D Nifti file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>niimg</strong> (<em>Niimg-like object</em>) – If string, consider it as a path to NIfTI image and call <cite>nibabel.load()</cite>
+on it. The ‘~’ symbol is expanded to the user home folder. If it is an
+object, check if affine attribute is present, raise <cite>TypeError</cite> otherwise.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>masked_niimg</strong> – Masked Nifti file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nibabel.nifti1.Nifti1Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pfctoolkit.tools.NiftiMasker.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">niimg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.NiftiMasker.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Masks 3D Nifti file into 1D array. Retypes to float32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>niimg</strong> (<em>Niimg-like object</em>) – If string, consider it as a path to NIfTI image and call <cite>nibabel.load()</cite> on
+it. The ‘~’ symbol is expanded to the user home folder. If it is an object,
+check if affine attribute is present, raise <cite>TypeError</cite> otherwise.</p></li>
+<li><p><strong>weight</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, transform the niimg with weighting. If False, transform the niimg
+without weighting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>region_signals</strong> – Masked Nifti file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.tools.get_chunks">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.tools.</span></span><span class="sig-name descname"><span class="pre">get_chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rois</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.get_chunks" title="Permalink to this definition"></a></dt>
+<dd><p>Get list of dicts containing Chunks to load and their associated ROIs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rois</strong> (<em>list of str</em>) – List of paths to ROIs to find chunks for.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#pfctoolkit.config.Config" title="pfctoolkit.config.Config"><em>Config</em></a>) – Configuration object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dict of dicts containing Chunk path and list of associated ROI paths.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict of dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pfctoolkit.tools.load_roi">
+<span class="sig-prename descclassname"><span class="pre">pfctoolkit.tools.</span></span><span class="sig-name descname"><span class="pre">load_roi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roi_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pfctoolkit.tools.load_roi" title="Permalink to this definition"></a></dt>
+<dd><p>Load ROIs from path or CSV.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>roi_path</strong> (<em>str</em>) – Path to CSV containing paths to NIfTI images OR Path to directory containing
+NIfTI images OR Path to NIfTI image.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>roi_paths</strong> – List of paths to NIfTI image ROIs.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pfctoolkit">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pfctoolkit" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, William Drew.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
