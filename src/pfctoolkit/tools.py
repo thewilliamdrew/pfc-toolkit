@@ -18,9 +18,8 @@ def load_roi(roi_path):
     Parameters
     ----------
     roi_path : str
-        Path to CSV containing paths to NIfTI images OR
-        Path to directory containing NIfTI images OR
-        Path to NIfTI image.
+        Path to CSV containing paths to NIfTI images OR Path to directory containing
+        NIfTI images OR Path to NIfTI image.
 
     Returns
     -------
@@ -83,8 +82,7 @@ def get_chunks(rois, config):
 
 
 class NiftiMasker:
-    """
-    A Faster NiftiMasker.
+    """A Faster NiftiMasker.
 
     Attributes
     ----------
@@ -92,7 +90,7 @@ class NiftiMasker:
         Nifti binary mask.
     mask_idx : numpy.ndarray
         1D numpy.ndarray containing indexes from flattened mask image.
-    mask_shape : 3-tuple of ints
+    mask_shape : tuple of ints
         Shape of mask_idx.
     mask_size : int
         Number of voxels in entire space, including outside the brain.
@@ -101,13 +99,13 @@ class NiftiMasker:
 
     def __init__(self, mask_img=None):
         """
+
         Parameters
         ----------
         mask_img : Niimg-like object
-            If string, consider it as a path to NIfTI image and call
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home
-            folder. If it is an object, check if affine attribute is present,
-            raise `TypeError` otherwise.
+            If string, consider it as a path to NIfTI image and call `nibabel.load()` on
+            it. The '~' symbol is expanded to the user home folder. If it is an object,
+            check if affine attribute is present, raise `TypeError` otherwise.
 
         """
         self.mask_img = check_niimg(mask_img)
@@ -117,17 +115,17 @@ class NiftiMasker:
         self.mask_size = np.prod(self.mask_shape)
 
     def transform(self, niimg=None, weight=False):
-        """Masks 3D Nifti file into 1D array. Retypes to float32
+        """Masks 3D Nifti file into 1D array. Retypes to float32.
+
         Parameters
         ----------
         niimg : Niimg-like object
-            If string, consider it as a path to NIfTI image and call
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home
-            folder. If it is an object, check if affine attribute is present,
-            raise `TypeError` otherwise.
+            If string, consider it as a path to NIfTI image and call `nibabel.load()` on
+            it. The '~' symbol is expanded to the user home folder. If it is an object,
+            check if affine attribute is present, raise `TypeError` otherwise.
         weight : bool, default False
-            If True, transform the niimg with weighting. If False, transform the
-            niimg without weighting.
+            If True, transform the niimg with weighting. If False, transform the niimg
+            without weighting.
 
         Returns
         -------
@@ -144,6 +142,7 @@ class NiftiMasker:
 
     def inverse_transform(self, flat_niimg=None):
         """Unmasks 1D array into 3D Nifti file. Retypes to float32.
+
         Parameters
         ----------
         flat_niimg : numpy.ndarray
@@ -161,13 +160,13 @@ class NiftiMasker:
 
     def mask(self, niimg=None):
         """Masks 3D Nifti file into Masked 3D Nifti file.
+
         Parameters
         ----------
         niimg : Niimg-like object
-            If string, consider it as a path to NIfTI image and call
-            `nibabel.load()` on it. The '~' symbol is expanded to the user home
-            folder. If it is an object, check if affine attribute is present,
-            raise `TypeError` otherwise.
+            If string, consider it as a path to NIfTI image and call `nibabel.load()`
+            on it. The '~' symbol is expanded to the user home folder. If it is an
+            object, check if affine attribute is present, raise `TypeError` otherwise.
 
         Returns
         -------

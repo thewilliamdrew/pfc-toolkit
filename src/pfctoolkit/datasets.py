@@ -21,26 +21,26 @@ datasets = {
 def get_img(ds):
     """Get a standard image file as a Niimg
 
-    Args:
-        ds (str) : Name of the image. Options are as follows:
+    Parameters
+    ----------
+    ds : str
+        Name of image to get.\n
+        Volume Masks:\n
+        "MNI152_T1_2mm_brain"\n
+        "MNI152_T1_2mm_brain_mask"\n
+        "MNI152_T1_2mm_brain_mask_dil"\n
+        "MNI152_T1_1mm_brain"\n
+        "MNI152_T1_1mm_brain_mask"\n
+        "MNI152_T1_1mm_brain_mask_dil"\n
+        Surface Masks:\n
+        "fs5_mask"\n
+        "fs5_mask_lh"\n
+        "fs5_mask_rh"\n
 
-            Volume Masks
-            ------------
-            "MNI152_T1_2mm_brain"
-            "MNI152_T1_2mm_brain_mask"
-            "MNI152_T1_2mm_brain_mask_dil"
-            "MNI152_T1_1mm_brain"
-            "MNI152_T1_1mm_brain_mask"
-            "MNI152_T1_1mm_brain_mask_dil"
+    Returns
+    -------
+    Niimg-like object
 
-            Surface Masks
-            -------------
-            "fs5_mask"
-            "fs5_mask_lh"
-            "fs5_mask_rh"
-
-    Returns:
-        Niimg-like object
     """
     assert ds in datasets.keys(), "Unknown image specified"
     fname = datasets[ds]
@@ -53,26 +53,27 @@ def get_img(ds):
 def get_img_path(ds):
     """Get a standard image file path
 
-    Args:
-        ds (str) : Name of the image. Options are as follows:
+    Parameters
+    ----------
+    ds : str
+        Name of image to get path of.\n
+        Volume Masks\n
+        "MNI152_T1_2mm_brain"\n
+        "MNI152_T1_2mm_brain_mask"\n
+        "MNI152_T1_2mm_brain_mask_dil"\n
+        "MNI152_T1_1mm_brain"\n
+        "MNI152_T1_1mm_brain_mask"\n
+        "MNI152_T1_1mm_brain_mask_dil"\n
+        Surface Masks\n
+        "fs5_mask"\n
+        "fs5_mask_lh"\n
+        "fs5_mask_rh"\n
 
-            Volume Masks
-            ------------
-            "MNI152_T1_2mm_brain"
-            "MNI152_T1_2mm_brain_mask"
-            "MNI152_T1_2mm_brain_mask_dil"
-            "MNI152_T1_1mm_brain"
-            "MNI152_T1_1mm_brain_mask"
-            "MNI152_T1_1mm_brain_mask_dil"
+    Returns
+    -------
+    str
+        Path to image.
 
-            Surface Masks
-            -------------
-            "fs5_mask"
-            "fs5_mask_lh"
-            "fs5_mask_rh"
-
-    Returns:
-        str : Path to image
     """
     assert ds in datasets.keys(), "Unknown image specified"
     fname = datasets[ds]
