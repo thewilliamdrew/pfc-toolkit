@@ -7,7 +7,7 @@ The project was started in 2019 by William Drew for his Harvard undergraduate th
 
 The project was supervised by Dr. Michael D. Fox, MD, PhD first at the Berenson-Allen Center for Noninvasive Brain Stimulation at Beth Israel Deaconess Medical Center and later at the Center for Brain Circuit Therapeutics at Brigham and Women's Hospital.
 
-This project references work from [@clin045](https://github.com/clin045)'s and [@alexlicohen](https://github.com/alexlicohen)'s `connectome_quick.py` from nimlab and [@andreashorn](https://github.com/andreashorn)'s `connectome.sh` from [LeadDBS](https://github.com/netstim/leaddbs).
+This project references work from [@clin045](https://github.com/clin045)'s and [@alexlicohen](https://github.com/alexlicohen)'s `connectome_quick.py` from [nimlab](https://github.com/nimlab) and [@andreashorn](https://github.com/andreashorn)'s `connectome.sh` from [LeadDBS](https://github.com/netstim/leaddbs).
 
 The Precomputed Functional Connectome Toolkit is for research only; please do not use results from PFC Toolkit for clinical decisions.
 
