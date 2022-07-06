@@ -1,4 +1,5 @@
-"""usage: connectome_precomputed.py [-h] -r -c -o
+#!/usr/bin/env python3
+"""usage: connectome_precomputed [-h] -r -c -o
 
 Generate AvgR, AvgR_Fz, and T functional connectivity chunks for a single chunk.
 

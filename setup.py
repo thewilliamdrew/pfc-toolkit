@@ -7,7 +7,7 @@ LICENSE = "BSD License"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="0.0.8",
+    version="0.0.10",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
@@ -30,7 +30,14 @@ setuptools.setup(
         "pfctoolkit.chunks": ["*.nii.gz", "*.gii"],
         "pfctoolkit.data": ["*.nii.gz", "*.gii"],
         "pfctoolkit.configs": ["*.json"],
+        "pfctoolkit.scripts": ["*.py"],
     },
+    scripts=[
+        "src/pfctoolkit/scripts/connectome_precomputed",
+        "src/pfctoolkit/scripts/generate_pfc_combo_chunks",
+        "src/pfctoolkit/scripts/generate_pfc_fc_chunks",
+        "src/pfctoolkit/scripts/generate_pfc_weighted_masks",
+    ],
     install_requires=[
         "tqdm",
         "numba",

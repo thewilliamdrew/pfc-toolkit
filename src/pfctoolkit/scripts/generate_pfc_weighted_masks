@@ -1,4 +1,5 @@
-"""usage: generate_pfc_weighted_masks.py [-h] [-b] -cs [-n] -o 
+#!/usr/bin/env python3
+"""usage: generate_pfc_weighted_masks [-h] [-b] -cs [-n] -o 
 
 Generate BOLD norm and stdev weighted masks for a precomputed connectome.
 
