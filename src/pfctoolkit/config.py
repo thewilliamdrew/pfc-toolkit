@@ -5,7 +5,6 @@ Configuration objects to facilitate using the Precomputed Connectome.
 
 import os
 import json
-import importlib.resources as pkg_resources
 
 
 class Config:
@@ -15,7 +14,7 @@ class Config:
         Parameters
         ----------
         pcc : str
-            Name of configfile. Must exist in pfctoolkit/configs/.
+            Name of configfile. Must exist in $HOME/pfctoolkit_config/.
 
         Raises
         ------
@@ -24,9 +23,8 @@ class Config:
         FileNotFoundError
             Requsted config file does not exist.
         """
-        from . import configs
-
-        with pkg_resources.path(configs, f"{pcc}.json") as configfile:
+        home = os.path.expanduser('~')
+        with os.path.join(home, f"pfctoolkit_config/{pcc}.json") as configfile:
             try:
                 with open(str(configfile)) as js:
                     self.config = json.load(js)
