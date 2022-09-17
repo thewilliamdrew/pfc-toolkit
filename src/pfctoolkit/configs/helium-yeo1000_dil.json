@@ -1,0 +1,16 @@
+{
+    "name": "helium-yeo1000_dil",
+    "mask": "MNI152_T1_2mm_brain_mask_dil",
+    "brain_size": 292019,
+    "avgr": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/AvgR",
+    "fz": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/AvgR_Fz",
+    "t": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/T",
+    "combo": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/Combo",
+    "std": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/yeo1000_dil_mask_TC_std_weighted.nii.gz",
+    "norm": "/Users/wd957/projects/precomputed_connectome/yeo1000_dil_pcc/yeo1000_dil_mask_TC_norm_weighted.nii.gz",
+    "chunk_name": "MNI152_2mm_dil_3209v_91c",
+    "num_chunks": 91,
+    "chunk_size": 3209,
+    "chunk_idx": "/Users/wd957/projects/chunks/MNI152_2mm_dil_3209v_91c/chunk_idx.nii.gz",
+    "type": "volume"
+}
