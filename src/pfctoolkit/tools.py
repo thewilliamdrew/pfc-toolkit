@@ -65,9 +65,9 @@ def get_chunks(rois, config):
 
     """
     chunk_dict = {}
-    chunk_map = image.load_img(config.get("chunk_idx"))
+    chunk_map = image.load_img(config.get("chunk_idx"), dtype=np.float32)
     for roi in tqdm(rois):
-        roi_image = image.load_img(roi)
+        roi_image = image.load_img(roi, dtype=np.float32)
         bin_roi_image = image.math_img("img != 0", img=roi_image)
         roi_chunks = image.math_img(
             "img * mask", img=bin_roi_image, mask=chunk_map
@@ -110,7 +110,7 @@ class NiftiMasker:
 
         """
         self.mask_img = check_niimg(mask_img)
-        self.mask_data = self.mask_img.get_fdata().astype(np.float32)
+        self.mask_data = image.get_data(self.mask_img).astype(np.float32)
         (self.mask_idx,) = np.where((self.mask_data != 0).flatten())
         self.mask_shape = self.mask_data.shape
         self.mask_size = np.prod(self.mask_shape)
