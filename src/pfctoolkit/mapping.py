@@ -252,7 +252,7 @@ def get_roi_voxel_maps(chunks, roi, config, map_type="t", output_dir=""):
 
         chunk_index_map = chunk_masker.transform(index_map)
         chunk_index_locations = np.where(chunk_index_map)[0]
-        trimmed_chunk_index_map = chunk_index_map[chunk_index_locations].astype(int)
+        trimmed_chunk_index_map = chunk_index_map[chunk_index_locations].astype(int) - 1
         voxel_map[[trimmed_chunk_index_map], :] = chunk_data[[chunk_index_locations], :]
 
     if output_dir:
