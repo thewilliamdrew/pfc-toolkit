@@ -208,7 +208,7 @@ def get_roi_voxel_maps(chunks, roi, config, map_type="t", output_dir=""):
     chunk_path = config.get(map_type)
     image_type = config.get("type")
 
-    roi_name = os.path.basename(test_roi_path).split(".nii")[0].split(".gii")[0]
+    roi_name = os.path.basename(roi).split(".nii")[0].split(".gii")[0]
 
     if image_type == "volume":
         brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
