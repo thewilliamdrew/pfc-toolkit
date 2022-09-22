@@ -5,6 +5,7 @@ Tools to perform Lesion Network Mapping with the Precomputed Connectome
 import os
 import numpy as np
 import nibabel as nib
+from tqdm import tqdm
 from numba import jit
 from nilearn import image
 from pfctoolkit import tools, datasets, surface
@@ -174,6 +175,96 @@ def publish_atlas(atlas, output_dir, config):
             out_img.to_filename(output_path)
     print(f"Network maps output to {output_dir}")
     print("Done!")
+
+
+def get_roi_voxel_maps(chunks, roi, config, map_type="t", output_dir=""):
+    """Get array of voxel maps for a given ROI. If output_dir is specified. Save array as .npy file.
+
+    Parameters
+    ----------
+    chunks : int
+        Index of chunk to be processed.
+    roi :  str
+        ROI path to obtain voxel maps for.
+    config : pfctoolkit.config.Config
+        Configuration of the precomputed connectome.
+    map_type : str
+        Type of voxel map to return. Defaults to "t".
+    output_dir : str
+        Path to save roi voxel map array to.
+
+    Returns
+    -------
+    voxel_maps : ndarray or None
+        ndarray containing voxel connectivity maps. None if output_dir is specified.
+
+    """
+    chunk_types = {
+        "avgr": "AvgR",
+        "fz": "AvgR_Fz",
+        "t": "T",
+        "combo": "Combo",
+    }
+    chunk_path = config.get(map_type)
+    image_type = config.get("type")
+
+    roi_name = os.path.basename(test_roi_path).split(".nii")[0].split(".gii")[0]
+
+    if image_type == "volume":
+        brain_masker = tools.NiftiMasker(datasets.get_img(config.get("mask")))
+        roi_masker = tools.NiftiMasker(brain_masker.mask(roi))
+    elif image_type == "surface":
+        brain_masker = surface.GiftiMasker(datasets.get_img(config.get("mask")))
+        roi_masker = surface.GiftiMasker(brain_masker.mask(roi))
+
+    brain_weight = brain_masker.transform(roi)
+    brain_mask = brain_weight != 0
+
+    roi_size = np.sum(brain_mask)
+    voxel_map = np.zeros((roi_size, config.get("brain_size")))
+
+    index_map = roi_masker.inverse_transform(np.arange(1, roi_size + 1))
+
+    for chunk in tqdm(chunks):
+        if image_type == "volume":
+            chunk_masker = tools.NiftiMasker(
+                image.math_img(f"img=={chunk}", img=config.get("chunk_idx"))
+            )
+        elif image_type == "surface":
+            chunk_masker = surface.GiftiMasker(
+                surface.new_gifti_image(
+                    datasets.get_img(config.get("chunk_idx")).agg_data() == chunk
+                )
+            )
+
+        chunk_weight = chunk_masker.transform(roi)
+        chunk_mask = chunk_weight != 0
+
+        chunk_data = np.load(
+            os.path.join(chunk_path, f"{chunk}_{chunk_types[map_type]}.npy")
+        )
+        expected_shape = (config.get("chunk_size"), config.get("brain_size"))
+        if chunk_data.shape != expected_shape:
+            raise TypeError(
+                f"Chunk expected to have shape {expected_shape} but"
+                f" instead has shape {chunk_data.shape}!"
+            )
+
+        chunk_index_map = chunk_masker.transform(index_map)
+        chunk_index_locations = np.where(chunk_index_map)[0]
+        trimmed_chunk_index_map = chunk_index_map[chunk_index_locations].astype(int)
+        voxel_map[[trimmed_chunk_index_map], :] = chunk_data[[chunk_index_locations], :]
+
+    if output_dir:
+        out_fname = os.path.join(
+            os.path.abspath(output_dir),
+            f"{roi_name}_voxel_maps_{chunk_types[map_type]}.npy",
+        )
+        np.save(out_fname, voxel_map)
+        print(f"Saved to: {out_fname} !")
+        return None
+    else:
+        return voxel_map
 
 
 @jit(nopython=True)
