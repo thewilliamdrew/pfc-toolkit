@@ -221,7 +221,7 @@ def get_roi_voxel_maps(chunks, roi, config, map_type="t", output_dir=""):
     brain_mask = brain_weight != 0
 
     roi_size = np.sum(brain_mask)
-    voxel_map = np.zeros((roi_size, config.get("brain_size")))
+    voxel_map = np.zeros((roi_size, config.get("brain_size")), dtype=np.float32)
 
     index_map = roi_masker.inverse_transform(np.arange(1, roi_size + 1))
 
