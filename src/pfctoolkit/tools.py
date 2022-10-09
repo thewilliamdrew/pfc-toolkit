@@ -72,7 +72,7 @@ def get_chunks(rois, config):
         roi_chunks = image.math_img(
             "img * mask", img=bin_roi_image, mask=chunk_map
         ).get_fdata()
-        chunks = np.unique(roi_chunks).astype(int)
+        chunks = np.unique(roi_chunks).astype(np.int32)
         chunks = chunks[chunks != 0]
         for chunk in chunks:
             if chunk in chunk_dict:
