@@ -134,7 +134,7 @@ class NiftiMasker:
             Masked Nifti file.
 
         """
-        niimg = check_niimg(niimg).get_fdata().astype(np.float32)
+        niimg = np.nan_to_num(check_niimg(niimg).get_fdata()).astype(np.float32)
         if weight:
             img = np.multiply(self.mask_data, niimg)
         else:
