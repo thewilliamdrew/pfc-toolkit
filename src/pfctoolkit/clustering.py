@@ -58,7 +58,7 @@ def generate_weighted_network_matrix(roi, chunks, pcc_config):
         # Get mapping of chunk idx to roi idx
         roi_index_in_chunk = np.where(chunk_index_in_roi > 0)[0]
 
-        roi_weight_matrix[roi_index_in_chunk, :] = (
-            chunk_data[chunk_index_in_roi[roi_index_in_chunk] - 1, :] + 1
-        )
+        roi_weight_matrix[roi_index_in_chunk, :] = chunk_data[
+            chunk_index_in_roi[roi_index_in_chunk] - 1, :
+        ]
     return roi_weight_matrix, roi_size
