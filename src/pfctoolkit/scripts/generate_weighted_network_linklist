@@ -100,6 +100,8 @@ if __name__ == "__main__":
     if args.threshold:
         threshold_x, threshold_y = np.where(roi_weight_matrix > args.threshold)
     elif args.percent_threshold:
+        for i in range(roi_size):
+            roi_weight_matrix[i, i] = 0
         exclude = int(np.floor(roi_size**2 * (1 - args.percent_threshold)))
         threshold_x, threshold_y = np.dstack(
             np.unravel_index(
