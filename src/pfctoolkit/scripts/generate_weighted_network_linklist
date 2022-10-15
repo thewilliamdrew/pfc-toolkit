@@ -11,6 +11,8 @@ Arguments:
 
   -t, --threshold   Level to threshold Pearson Correlations at.
 
+  -p, --percent-threshold   Level to threshold Pearson Correlations at top X percent.
+
   -c, --config      Name of precomputed connectome config file to use.
 
   -o, --output-dir  Path to output directory.
@@ -27,6 +29,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate weighted network link-lists for clustering with infomap."
     )
+    group = parser.add_mutually_exclusive_group(required=True)
 
     parser.add_argument(
         "-r",
@@ -37,13 +40,22 @@ if __name__ == "__main__":
         required=True,
     )
 
-    parser.add_argument(
+    group.add_argument(
         "-t",
         "--threshold",
         metavar="\b",
         help="Level to threshold Pearson Correlations at.",
         type=float,
-        required=True,
+        required=False,
+    )
+
+    group.add_argument(
+        "-p",
+        "--percent-threshold",
+        metavar="\b",
+        help="Level to threshold Pearson Correlations at top X percent.",
+        type=float,
+        required=False,
     )
 
     parser.add_argument(
@@ -85,8 +97,17 @@ if __name__ == "__main__":
     roi_weight_matrix, roi_size = clustering.generate_weighted_network_matrix(
         roi, chunks, pcc_config
     )
-
-    threshold_x, threshold_y = np.where(roi_weight_matrix > args.threshold)
+    if args.threshold:
+        threshold_x, threshold_y = np.where(roi_weight_matrix > args.threshold)
+    elif args.percent_threshold:
+        exclude = int(np.floor(roi_size**2 * (1 - args.percent_threshold)))
+        threshold_x, threshold_y = np.dstack(
+            np.unravel_index(
+                np.argsort(roi_weight_matrix.ravel()), (roi_size, roi_size)
+            )
+        )[0][:exclude:-1, :].transpose()
+    else:
+        raise ValueError("No Threshold Set!")
     with open(
         os.path.join(
             output_dir, f"{os.path.basename(roi[0]).split('.nii')[0]}_linklist.txt"
