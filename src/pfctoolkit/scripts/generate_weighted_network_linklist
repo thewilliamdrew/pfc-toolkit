@@ -9,6 +9,8 @@ Arguments:
   -r, --roi-dir     Path to a single binary Nifti ROI, or path to CSV containing binary 
                     Nifti ROI paths.
 
+  -t, --threshold   Level to threshold Pearson Correlations at.
+
   -c, --config      Name of precomputed connectome config file to use.
 
   -o, --output-dir  Path to output directory.
@@ -17,7 +19,7 @@ Arguments:
 
 import os
 import argparse
-
+import numpy as np
 from tqdm import trange
 from pfctoolkit import tools, config, datasets, clustering
 
@@ -32,6 +34,15 @@ if __name__ == "__main__":
         metavar="\b",
         help="Path to a single binary Nifti ROI.",
         type=str,
+        required=True,
+    )
+
+    parser.add_argument(
+        "-t",
+        "--threshold",
+        metavar="\b",
+        help="Level to threshold Pearson Correlations at.",
+        type=float,
         required=True,
     )
 
@@ -75,12 +86,14 @@ if __name__ == "__main__":
         roi, chunks, pcc_config
     )
 
+    threshold_x, threshold_y = np.where(roi_weight_matrix > args.threshold)
     with open(
         os.path.join(
             output_dir, f"{os.path.basename(roi[0]).split('.nii')[0]}_linklist.txt"
         ),
         "w",
     ) as fp:
-        for i in trange(roi_size - 1):
-            for j in range(i + 1, roi_size):
-                fp.write(f"{i+1} {j+1} {roi_weight_matrix[i,j]}\n")
+        for i in trange(len(threshold_x)):
+            fp.write(
+                f"{threshold_x[i]+1} {threshold_y[i]+1} {roi_weight_matrix[threshold_x[i],threshold_y[i]]}\n"
+            )
