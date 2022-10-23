@@ -25,6 +25,23 @@ import numpy as np
 from tqdm import trange
 from pfctoolkit import tools, config, datasets, clustering
 
+
+def write_linklist(
+    output_dir, roi, threshold_x, threshold_y, roi_weight_matrix, threshold_str
+):
+    with open(
+        os.path.join(
+            output_dir,
+            f"{os.path.basename(roi[0]).split('.nii')[0]}_{threshold_str}_linklist.txt",
+        ),
+        "w",
+    ) as fp:
+        for i in trange(len(threshold_x)):
+            fp.write(
+                f"{threshold_x[i]+1} {threshold_y[i]+1} {roi_weight_matrix[threshold_x[i],threshold_y[i]]}\n"
+            )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate weighted network link-lists for clustering with infomap."
@@ -44,6 +61,7 @@ if __name__ == "__main__":
         "-t",
         "--threshold",
         metavar="\b",
+        nargs="*",
         help="Level to threshold Pearson Correlations at.",
         type=float,
         required=False,
@@ -53,6 +71,7 @@ if __name__ == "__main__":
         "-p",
         "--percent-threshold",
         metavar="\b",
+        nargs="*",
         help="Level to threshold Pearson Correlations at top X percent.",
         type=float,
         required=False,
@@ -100,23 +119,33 @@ if __name__ == "__main__":
     for i in range(roi_size):
         roi_weight_matrix[i, i] = 0
     if args.threshold:
-        threshold_x, threshold_y = np.where(roi_weight_matrix > args.threshold)
-    elif args.percent_threshold:
-        exclude = int(np.floor(roi_size**2 * (1 - args.percent_threshold)))
-        threshold_x, threshold_y = np.dstack(
-            np.unravel_index(
-                np.argsort(roi_weight_matrix.ravel()), (roi_size, roi_size)
+        for threshold in args.threshold:
+            threshold_x, threshold_y = np.where(roi_weight_matrix > threshold)
+            threshold_string = f"thr-{threshold}"
+            write_linklist(
+                output_dir,
+                roi,
+                threshold_x,
+                threshold_y,
+                roi_weight_matrix,
+                threshold_string,
             )
-        )[0][:exclude:-1, :].transpose()
+    elif args.percent_threshold:
+        for threshold in args.percent_threshold:
+            exclude = int(np.floor(roi_size**2 * (1 - threshold)))
+            threshold_x, threshold_y = np.dstack(
+                np.unravel_index(
+                    np.argsort(roi_weight_matrix.ravel()), (roi_size, roi_size)
+                )
+            )[0][:exclude:-1, :].transpose()
+            threshold_string = f"pthr-{threshold}"
+            write_linklist(
+                output_dir,
+                roi,
+                threshold_x,
+                threshold_y,
+                roi_weight_matrix,
+                threshold_string,
+            )
     else:
         raise ValueError("No Threshold Set!")
-    with open(
-        os.path.join(
-            output_dir, f"{os.path.basename(roi[0]).split('.nii')[0]}_linklist.txt"
-        ),
-        "w",
-    ) as fp:
-        for i in trange(len(threshold_x)):
-            fp.write(
-                f"{threshold_x[i]+1} {threshold_y[i]+1} {roi_weight_matrix[threshold_x[i],threshold_y[i]]}\n"
-            )
