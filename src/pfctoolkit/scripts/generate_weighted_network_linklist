@@ -130,6 +130,7 @@ if __name__ == "__main__":
                 roi_weight_matrix,
                 threshold_string,
             )
+            del threshold_x, threshold_y
     elif args.percent_threshold:
         for threshold in args.percent_threshold:
             exclude = int(np.floor(roi_size**2 * (1 - threshold)))
@@ -147,5 +148,6 @@ if __name__ == "__main__":
                 roi_weight_matrix,
                 threshold_string,
             )
+            del threshold_x, threshold_y
     else:
         raise ValueError("No Threshold Set!")
