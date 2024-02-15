@@ -6,8 +6,7 @@ Generate weighted network matrix files for clustering use with infomap.
 Arguments:
   -h, --help        show this help message and exit
 
-  -r, --roi-dir     Path to a single binary Nifti ROI, or path to CSV containing binary 
-                    Nifti ROI paths.
+  -r, --roi-dir     Path to a single binary Nifti ROI.
 
   -t, --threshold   Level to threshold Pearson Correlations at.
 
