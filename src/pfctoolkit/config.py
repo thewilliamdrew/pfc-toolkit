@@ -23,7 +23,7 @@ class Config:
         FileNotFoundError
             Requsted config file does not exist.
         """
-        home = os.path.expanduser('~')
+        home = os.path.expanduser("~")
         configfile = os.path.join(home, f"pfctoolkit_config/{pcc}.json")
         try:
             with open(str(configfile)) as js:
