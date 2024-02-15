@@ -10,6 +10,7 @@ from tqdm import tqdm
 from glob import glob
 from nilearn import image
 from nilearn._utils import check_niimg
+from pfctoolkit import datasets, surface
 
 
 def load_roi(roi_path):
@@ -80,6 +81,78 @@ def get_chunks(rois, config):
             else:
                 chunk_dict[chunk] = [roi]
     return chunk_dict
+
+
+def get_voxel_conn_map(x, y, z, map_type, config):
+    """Get connectivity map for single voxel
+
+    Parameters
+    ----------
+    x : int
+        X-coordinate for voxel to retrieve connectivity map for.
+    y : int
+        Y-coordinate for voxel to retrieve connectivity map for.
+    z : int
+        Z-coordinate for voxel to retrieve connectivity map for.
+    map_type : str
+        Type of connectivity map to retrieve: "t", "avgr", or "fz".
+    config : Config
+        Configuration object.
+
+    Returns
+    -------
+    Nifti1Image
+        Nifti image object.
+
+    """
+    chunk_paths = {
+        "avgr": config.get("avgr"),
+        "fz": config.get("fz"),
+        "t": config.get("t"),
+        "combo": config.get("combo"),
+    }
+    chunk_type = {
+        "avgr": "AvgR",
+        "fz": "AvgR_Fz",
+        "t": "T",
+        "combo": "Combo",
+    }
+    chunk_map = image.load_img(config.get("chunk_idx"))
+    brain_mask = datasets.get_img(config.get("mask"))
+    affine = brain_mask.affine
+    mni_coordinate = np.array([[x, y, z]])
+    voxel_coordinate = (
+        np.linalg.inv(affine).dot(np.append(mni_coordinate, 1).T).astype(int)[:3]
+    )
+
+    voxel_data = np.zeros(brain_mask.shape)
+    voxel_data[voxel_coordinate[0], voxel_coordinate[1], voxel_coordinate[2]] = 1
+    voxel_img = image.new_img_like(brain_mask, voxel_data)
+
+    roi_chunks = image.math_img("img * mask", img=voxel_img, mask=chunk_map).get_fdata()
+    chunks = np.unique(roi_chunks).astype(int)
+    chunk = chunks[chunks != 0][0]
+
+    image_type = config.get("type")
+    if image_type == "volume":
+        brain_masker = NiftiMasker(datasets.get_img(config.get("mask")))
+        chunk_masker = NiftiMasker(
+            image.math_img(f"img=={chunk}", img=config.get("chunk_idx"))
+        )
+    elif image_type == "surface":
+        brain_masker = surface.GiftiMasker(datasets.get_img(config.get("mask")))
+        chunk_masker = surface.GiftiMasker(
+            surface.new_gifti_image(
+                datasets.get_img(config.get("chunk_idx")).agg_data() == chunk
+            )
+        )
+    chunk_data = np.load(
+        os.path.join(chunk_paths[map_type], f"{chunk}_{chunk_type[map_type]}.npy")
+    )
+    voxel_connectivity = np.dot(chunk_masker.transform(voxel_img), chunk_data)
+    voxel_connectivity_img = brain_masker.inverse_transform(voxel_connectivity)
+
+    return voxel_connectivity_img
 
 
 class NiftiMasker:
