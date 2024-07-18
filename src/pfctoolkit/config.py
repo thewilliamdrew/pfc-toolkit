@@ -23,6 +23,9 @@ class Config:
         FileNotFoundError
             Requsted config file does not exist.
         """
+        self.mandatory_files = ["combo", "std", "norm", "chunk_idx"]
+        self.stat_ref_dict = {"t": "T", "avgr": "AvgR", "fz": "AvgR_Fz"} 
+        
         home = os.path.expanduser('~')
         configfile = os.path.join(home, f"pfctoolkit_config/{pcc}.json")
         try:
@@ -31,20 +34,27 @@ class Config:
             if self.check():
                 print(f"Config {self.config['name']} loaded")
             else:
+                print(self.check())
                 raise OSError(f"Config {self.config['name']} unavailable")
         except FileNotFoundError:
             raise FileNotFoundError(f"PCC config file {configfile} does not exist!")
 
-    def check(self):
+    def check(self, stat=True):
         """Check that all resources specified in config file are accessible and exist.
-
+        Params
+        ------
+        stat : tuple
+            The chosen statistical maps. 
+            
         Returns
         -------
         bool
             If True, then all resources specified in config file are accessible and
             exist.
         """
-        checks = ["avgr", "fz", "t", "combo", "std", "norm", "chunk_idx"]
+        checks = self.mandatory_files
+        for stat_choice in stat:
+            checks.append(self.stat_ref_dict[stat_choice])
         return all(list(map(os.path.exists, [self.config[key] for key in checks])))
 
     def get(self, key):
