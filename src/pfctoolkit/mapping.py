@@ -30,7 +30,7 @@ def process_chunk(chunk, rois, config, stat):
         Dictionary containing contributions to network maps.
 
     """
-    stat_ref_dict = {"t": "T", "avgr": "AvgR", "fz": "AvgR_Fz", "combo": "Combo"} # Prepare dict for mapping of stats keys to values
+    stat_ref_dict = {"combo": "Combo", "t": "T", "avgr": "AvgR", "fz": "AvgR_Fz"} # Prepare dict for mapping of stats keys to values
     stat_choice_list = ['combo'] # combo is mandatory
     for stat_choice in stat:
         stat_choice_list.append(stat_choice) # add chosen stats
@@ -77,11 +77,8 @@ def process_chunk(chunk, rois, config, stat):
                 f" instead has shape {chunk_data.shape}!"
             )
         if chunk_type[0] == "combo":
-            print('THIS IS THE LIST OF ROIS: ', rois)
             numerator = compute_numerator(norm_chunk_masks)
             for i, roi in enumerate(rois):
-                print("THIS IS THE FOUND ROI: ", roi)
-                print("THIS IS THE CHUNK TYPE: ", chunk_type[0])
                 denominator = compute_denominator(
                     brain_weights,
                     chunk_weights,
@@ -128,7 +125,7 @@ def update_atlas(contribution, atlas, stat):
 
     """
     mandatory_stats = ["network_weight", "numerator", "denominator"]
-    stat = stat + mandatory_stats
+    stat = list(stat) + mandatory_stats
     for roi in contribution.keys():
         if roi in atlas:
                 for stat_choice in stat:

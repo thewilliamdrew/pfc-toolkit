@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     # Process Chunks
     atlas = {}
-    for chunk in tqdm(chunks):
+    for chunk in tqdm(chunks, desc='Processing chunks'):
         contribution = mapping.process_chunk(chunk, chunks[chunk], pcc_config, stat)
         atlas = mapping.update_atlas(contribution, atlas, stat)
 
