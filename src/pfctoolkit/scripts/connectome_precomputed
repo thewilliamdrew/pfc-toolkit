@@ -69,7 +69,6 @@ if __name__ == "__main__":
     
     # Convert the --stat argument to a tuple of strings
     stat = tuple(map(str.strip, args.stat.strip('()').split(',')))
-    print("STAT CHOICE FOR DEBUG: ", stat)
 
     # Load ROI list
     roi_paths = tools.load_roi(os.path.abspath(args.roi_dir))

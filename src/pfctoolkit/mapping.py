@@ -39,7 +39,7 @@ def process_chunk(chunk, rois, config, stat):
     mapping = [] # Init mapping list
     for stat_choice in stat_choice_list: 
         chunk_paths[stat_choice] = config.get(stat_choice) # add the stats to the chunk path dict
-        mapping.append(tuple(stat_choice, stat_ref_dict[stat_choice]))
+        mapping.append((stat_choice, stat_ref_dict[stat_choice]))
         
     image_type = config.get("type")
     if image_type == "volume":
@@ -64,7 +64,7 @@ def process_chunk(chunk, rois, config, stat):
     norm_chunk_masks, std_chunk_masks = compute_chunk_masks(
         chunk_weights, norm_weight, std_weight
     )
-    contributions = {}
+    contributions = {roi: {} for roi in rois}
     
     for chunk_type in mapping:
         chunk_data = np.load(
@@ -77,8 +77,11 @@ def process_chunk(chunk, rois, config, stat):
                 f" instead has shape {chunk_data.shape}!"
             )
         if chunk_type[0] == "combo":
+            print('THIS IS THE LIST OF ROIS: ', rois)
             numerator = compute_numerator(norm_chunk_masks)
             for i, roi in enumerate(rois):
+                print("THIS IS THE FOUND ROI: ", roi)
+                print("THIS IS THE CHUNK TYPE: ", chunk_type[0])
                 denominator = compute_denominator(
                     brain_weights,
                     chunk_weights,
@@ -92,6 +95,7 @@ def process_chunk(chunk, rois, config, stat):
         else:
             network_maps = compute_network_maps(std_chunk_masks, chunk_data)
             for i, roi in enumerate(rois):
+
                 if chunk_type[0] == "avgr":
                     contributions[roi] = {
                         chunk_type[0]: network_maps[i, :],
