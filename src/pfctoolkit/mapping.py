@@ -64,8 +64,8 @@ def process_chunk(chunk, rois, config, stat):
     norm_chunk_masks, std_chunk_masks = compute_chunk_masks(
         chunk_weights, norm_weight, std_weight
     )
-    contributions = {roi: {} for roi in rois}
     
+    contributions = {roi: {} for roi in rois}
     for chunk_type in mapping:
         chunk_data = np.load(
             os.path.join(chunk_paths[chunk_type[0]], f"{chunk}_{chunk_type[1]}.npy")
@@ -128,15 +128,13 @@ def update_atlas(contribution, atlas, stat):
     stat = list(stat) + mandatory_stats
     for roi in contribution.keys():
         if roi in atlas:
-                for stat_choice in stat:
-                    atlas[roi][stat_choice] += contribution[roi][stat_choice]
+            for stat_choice in stat:
+                atlas[roi][stat_choice] += contribution[roi][stat_choice]
         else:
-                stat_dict = {}
-                for stat_choice in stat:
-                    stat_dict[stat_choice] = contribution[roi][stat_choice]
-                
-                atlas[roi] = stat_dict
-
+            stat_dict = {}
+            for stat_choice in stat:
+                stat_dict[stat_choice] = contribution[roi][stat_choice]
+            atlas[roi] = stat_dict
     return atlas
 
 
@@ -164,19 +162,25 @@ def publish_atlas(atlas, output_dir, config, stat):
         extension = ".gii"
     for roi in atlas:
         atlas[roi]["denominator"] = final_denominator(atlas[roi]["denominator"]) 
+        scaling_factor = atlas[roi]["numerator"] / atlas[roi]["denominator"]
         for stat_choice in stat:
-            atlas[roi] = atlas[roi][stat_choice] / atlas[roi]["network_weight"]
-        scaling_factor = atlas[roi]["numerator"] / atlas[roi]["denominator"] 
+            atlas[roi][stat_choice] = atlas[roi][stat_choice] / atlas[roi]["network_weight"]
         subject_name = os.path.basename(roi).split(".nii")[0]
         for map_type in [(stat, name) for stat, name in [("avgr", "AvgR"), ("fz", "AvgR_Fz"), ("t", "T")] if stat in stat_choice]:
             output_fname = f"{subject_name}_Precom_{map_type[1]}{extension}"
             output_path = os.path.join(output_dir, output_fname)
-            atlas[roi][map_type[0]] = atlas[roi][map_type[0]] * scaling_factor
+            atlas[roi][stat_choice] = atlas[roi][map_type[0]] * scaling_factor
             out_img = brain_masker.inverse_transform(atlas[roi][map_type[0]])
             out_img.to_filename(output_path)
     print(f"Network maps output to {output_dir}")
     print("Done!")
 
+
+@jit(nopython=True)
+def ensure_array(value):
+    if not isinstance(value, np.ndarray):
+        value = np.array([value])
+    return value
 
 @jit(nopython=True)
 def final_denominator(denominator):
