@@ -40,7 +40,7 @@ if __name__ == "__main__":
         "-c",
         "--config",
         metavar="\b",
-        help="Name of precomputed connectome config file to use.",
+        help="Path of precomputed connectome config file to use.",
         type=str,
         required=True,
     )
@@ -53,15 +53,28 @@ if __name__ == "__main__":
         type=str,
         required=True,
     )
+    
+    parser.add_argument(
+        "-s",
+        "--stat",
+        metavar="\b",
+        help="Statistical map choice (e.g., '(avgr, t, fz)').",
+        type=str,
+        required=False,
+        default='(r, t, rfz)'
+    )
 
     # Parse arguments
     args = parser.parse_args()
+    
+    # Convert the --stat argument to a tuple of strings
+    stat = tuple(map(str.strip, args.stat.strip('()').split(',')))
 
     # Load ROI list
     roi_paths = tools.load_roi(os.path.abspath(args.roi_dir))
 
     # Load and check PCC configuration
-    pcc_config = config.Config(args.config)
+    pcc_config = config.Config(args.config, stat)
 
     # Set output directory
     output_dir = os.path.abspath(args.output_dir)
@@ -74,9 +87,9 @@ if __name__ == "__main__":
 
     # Process Chunks
     atlas = {}
-    for chunk in tqdm(chunks):
-        contribution = mapping.process_chunk(chunk, chunks[chunk], pcc_config)
-        atlas = mapping.update_atlas(contribution, atlas)
+    for chunk in tqdm(chunks, desc='ROI Progress'):
+        contribution = mapping.process_chunk(chunk, chunks[chunk], pcc_config, stat)
+        atlas = mapping.update_atlas(contribution, atlas, stat)
 
     # Consolidate outputs
-    mapping.publish_atlas(atlas, output_dir, pcc_config)
+    mapping.publish_atlas(atlas, output_dir, pcc_config, stat)

@@ -127,7 +127,7 @@ def make_fz_maps(connectome_files, roi_mat):
     # Fix infinite values and nans in the case of single voxel autocorrelations
     finite_max = np.amax(np.ma.masked_invalid(fz), 1).data
     rows, cols = np.where(np.isinf(fz) | np.isnan(fz))
-    for row, col in tqdm(zip(rows, cols)):
+    for row, col in tqdm(zip(rows, cols), desc='Making Fz Map'):
         fz[row, col] = finite_max[row]
     return fz
 
@@ -313,7 +313,7 @@ def precomputed_connectome_fc_chunk(
     M2 = np.zeros((brain_size, chunk_size), dtype=np.float32)
 
     # For each connectome subject
-    for connectome_file in tqdm(connectome_files):
+    for connectome_file in tqdm(connectome_files, desc='Orchestrating Fz maps'):
         # Calculate Fz maps from a connectome subject
         fz_welford = make_fz_maps(connectome_file, chunk_roi)
         # Update Welford Maps

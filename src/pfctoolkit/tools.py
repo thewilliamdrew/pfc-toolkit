@@ -67,7 +67,7 @@ def get_chunks(rois, config):
     """
     chunk_dict = {}
     chunk_map = image.load_img(config.get("chunk_idx"))
-    for roi in tqdm(rois):
+    for roi in tqdm(rois, desc='Getting chunks'):
         roi_image = image.load_img(roi)
         bin_roi_image = image.math_img("img != 0", img=roi_image)
         roi_chunks = image.math_img(
