@@ -61,7 +61,7 @@ if __name__ == "__main__":
         help="Statistical map choice (e.g., '(avgr, t, fz)').",
         type=str,
         required=False,
-        default='(r, t, rfz)'
+        default='(avgr, t, fz)'
     )
 
     # Parse arguments
