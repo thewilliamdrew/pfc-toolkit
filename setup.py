@@ -45,7 +45,9 @@ setuptools.setup(
         "scipy",
         "nibabel",
         "nilearn",
-        "natsort"
+        "natsort",
+        "python-environ",
+        "boto3"
     ],
     python_requires=">=3.6",
 )
