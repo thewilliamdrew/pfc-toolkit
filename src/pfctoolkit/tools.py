@@ -5,12 +5,28 @@ Useful utilities for working with the Precomputed Connectome
 
 import os
 import csv
+import gzip
+import boto3
+import environ
 import numpy as np
+import nibabel as nib
+
 from tqdm import tqdm
 from glob import glob
+from io import BytesIO
 from nilearn import image
+from botocore.client import Config
 from nilearn._utils import check_niimg
 from pfctoolkit import datasets, surface
+
+
+env = environ.Env()
+
+ACCESS_KEY_ID = env('S3_ACCESS_KEY_ID', default='default_access_key_id')
+SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY', default='default_secret_access_key')
+STORAGE_BUCKET_NAME = env('S3_BUCKET_NAME', default='default_bucket_name')
+S3_ENDPOINT_URL = env('S3_ENDPOINT_URL', default='https://default.endpoint.url')
+S3_LOCATION = env('S3_LOCATION', default='nyc3')
 
 
 def load_roi(roi_path):
@@ -28,7 +44,9 @@ def load_roi(roi_path):
         List of paths to NIfTI image ROIs.
 
     """
-    if os.path.isdir(roi_path):
+    if type(roi_path) == nib.nifti1.Nifti1Image:
+        roi_paths = [roi_path]
+    elif os.path.isdir(roi_path):
         roi_paths = glob(os.path.join(os.path.abspath(roi_path), "*.nii*"))
         if len(roi_paths) == 0:
             raise FileNotFoundError("No NIfTI images found!")
@@ -66,9 +84,14 @@ def get_chunks(rois, config):
 
     """
     chunk_dict = {}
-    chunk_map = image.load_img(config.get("chunk_idx"))
+    chunk_map = image.load_img(config.get("chunk_idx")) if not config.get("use_s3", False) else fetch_from_s3(config.get("chunk_idx"))
     for roi in tqdm(rois, desc='Getting chunks'):
-        roi_image = image.load_img(roi)
+        if type(roi) == nib.nifti1.Nifti1Image:
+            roi_image = roi
+        elif config.get("use_s3", False) or roi.startswith("s3://"):
+            roi_image = fetch_from_s3(roi)
+        else:
+            roi_image = image.load_img(roi)
         bin_roi_image = image.math_img("img != 0", img=roi_image)
         roi_chunks = image.math_img(
             "img * mask", img=bin_roi_image, mask=chunk_map
@@ -146,9 +169,16 @@ def get_voxel_conn_map(x, y, z, map_type, config):
                 datasets.get_img(config.get("chunk_idx")).agg_data() == chunk
             )
         )
-    chunk_data = np.load(
-        os.path.join(chunk_paths[map_type], f"{chunk}_{chunk_type[map_type]}.npy")
-    )
+    if config.get("use_s3", False):
+        chunk_data = np.load(
+            fetch_from_s3(
+                os.path.join(chunk_paths[map_type], f"{chunk}_{chunk_type[map_type]}.npy")
+            )
+        )
+    else:
+        chunk_data = np.load(
+            os.path.join(chunk_paths[map_type], f"{chunk}_{chunk_type[map_type]}.npy")
+        )
     voxel_connectivity = np.dot(chunk_masker.transform(voxel_img), chunk_data)
     voxel_connectivity_img = brain_masker.inverse_transform(voxel_connectivity)
 
@@ -249,3 +279,87 @@ class NiftiMasker:
 
         """
         return self.inverse_transform(self.transform(niimg))
+
+
+def get_s3_client():
+    """Create and return a boto3 client configured for DigitalOcean Spaces"""  
+    session = boto3.session.Session()
+    client = session.client(
+        's3',
+        config=Config(s3={'addressing_style': 'virtual'}),
+        region_name=S3_LOCATION,
+        endpoint_url=S3_ENDPOINT_URL,
+        aws_access_key_id=ACCESS_KEY_ID,
+        aws_secret_access_key=SECRET_ACCESS_KEY,
+    )
+    
+    return client
+
+
+def fetch_from_s3(filepath):
+    """
+    Fetch and load files from DigitalOcean Spaces using boto3
+    
+    Parameters:
+    filepath (str): Path to file within the bucket
+    
+    Returns:
+    Various: Loaded file data depending on the file type
+    """
+
+    # First, check if the file is already loaded
+    if type(filepath) ==  nib.Nifti1Image or type(filepath) == nib.GiftiImage or type(filepath) == np.ndarray:
+        return filepath
+    
+    # Next, check if the file exists locally
+    if os.path.exists(filepath):
+        if filepath.endswith(('.nii.gz', '.nii')):
+            return nib.load(filepath)
+        else:
+            return np.load(filepath)
+
+    # Finally, fetch the file from S3 given that we can't find it any other way
+    # Get S3 client
+    s3_client = get_s3_client()
+
+    # Remove 's3://' prefix if present
+    if filepath.startswith('s3://'):
+        filepath = filepath.replace('s3://', '', 1)
+    
+    # Get the file from S3
+    try:
+        response = s3_client.get_object(Bucket=STORAGE_BUCKET_NAME, Key=filepath)
+        file_data = response['Body'].read()
+    except s3_client.exceptions.NoSuchKey:
+        print(f"Error: The key '{filepath}' does not exist in bucket '{STORAGE_BUCKET_NAME}'.")
+        raise
+    except Exception as e:
+        print(f"Unexpected error fetching file from S3: {str(e)}")
+        raise
+
+    # Load the file based on its extension
+    try:
+        if filepath.endswith('.nii.gz'):
+            fh = nib.FileHolder(fileobj=gzip.GzipFile(fileobj=BytesIO(file_data)))
+            return nib.Nifti1Image.from_file_map({'header': fh, 'image': fh})
+        
+        elif filepath.endswith('.nii'):
+            fh = nib.FileHolder(fileobj=BytesIO(file_data))
+            return nib.Nifti1Image.from_file_map({'header': fh, 'image': fh})
+        
+        elif filepath.endswith(('.npy', '.npz')):
+            return np.load(BytesIO(file_data), allow_pickle=True)
+        
+        elif filepath.endswith('.gii'):
+            fh = nib.FileHolder(fileobj=BytesIO(file_data))
+            return nib.GiftiImage.from_file_map({'image': fh})
+        
+        elif filepath.endswith('.gii.gz'):
+            fh = nib.FileHolder(fileobj=gzip.GzipFile(fileobj=BytesIO(file_data)))
+            return nib.GiftiImage.from_file_map({'image': fh})
+        
+        else:
+            raise ValueError(f"Unsupported file type: {os.path.splitext(filepath)[1]}")
+    except Exception as load_error:
+        print(f"Error loading file '{filepath}': {str(load_error)}")
+        raise
