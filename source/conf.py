@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "pfc-toolkit"
-copyright = "2022, William Drew"
+copyright = "2025, William Drew"
 author = "William Drew"
 
 # The full version, including alpha/beta/rc tags
