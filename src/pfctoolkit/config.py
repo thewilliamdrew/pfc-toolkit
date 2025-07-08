@@ -29,7 +29,7 @@ class Config:
         self.checks = ["combo", "std", "norm", "chunk_idx"]
         
         home = os.path.expanduser('~')
-        configfile = os.path.join(home, f"pfctoolkit_config/{pcc}.json")
+        configfile = os.path.join(home, f".config/pfctoolkit/{pcc}.json")
         try:
             with open(str(configfile)) as js:
                 self.config = json.load(js)
