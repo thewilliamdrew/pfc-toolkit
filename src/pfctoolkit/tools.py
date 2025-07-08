@@ -5,19 +5,20 @@ Useful utilities for working with the Precomputed Connectome
 
 import os
 import csv
+import gzip
+import boto3
+import environ
 import numpy as np
+import nibabel as nib
+
 from tqdm import tqdm
 from glob import glob
+from io import BytesIO
 from nilearn import image
+from botocore.client import Config
 from nilearn._utils import check_niimg
 from pfctoolkit import datasets, surface
 
-import environ
-import nibabel as nib
-import gzip
-from io import BytesIO
-import boto3
-from botocore.client import Config
 
 env = environ.Env()
 
