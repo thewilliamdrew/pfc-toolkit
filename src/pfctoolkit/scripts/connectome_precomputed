@@ -9,9 +9,14 @@ Arguments:
   -r, --roi-dir     Path to directory containing binary Nifti ROIs, or path to a single 
                     binary Nifti ROI, or path to CSV containing binary Nifti ROI paths.
 
-  -c, --config      Name of precomputed connectome config file to use.
+  -c, --config      Path or Name of precomputed connectome config file to use. If Path, 
+                    assumed to be in current working directory or absolute path. If Name 
+                    of config file, config file '[config].json' must be located in 
+                    ~/.config/pfctoolkit/.
 
   -o, --output-dir  Path to output directory.
+
+  -s, --stat        Statistical map choice (e.g., '(avgr, t, fz)').
 
 """
 import os
@@ -40,7 +45,7 @@ if __name__ == "__main__":
         "-c",
         "--config",
         metavar="\b",
-        help="Path of precomputed connectome config file to use.",
+        help="Path or Name of precomputed connectome config file to use. If Path, assumed to be in current working directory or absolute path. If Name of config file, config file '<config>.json' must be located in '~/.config/pfctoolkit/'.",
         type=str,
         required=True,
     )
