@@ -7,7 +7,7 @@ LICENSE = "BSD License"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="2024.8.1.1",
+    version="2026.9.18.0",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
