@@ -7,7 +7,7 @@ LICENSE = "BSD-3-Clause"
 
 setuptools.setup(
     name="pfc-toolkit",
-    version="2026.9.18.1",
+    version="2026.9.18.3",
     author="William Drew",
     author_email="william.drew100@gmail.com",
     description="The Precomputed Functional Connectome Toolkit",
@@ -40,6 +40,7 @@ setuptools.setup(
         "nibabel",
         "nilearn",
         "natsort",
+        "django-environ",
         "boto3"
     ],
     python_requires=">=3.6",
