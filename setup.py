@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-LICENSE = "BSD License"
+LICENSE = "BSD-3-Clause"
 
 setuptools.setup(
     name="pfc-toolkit",
@@ -18,11 +18,6 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/thewilliamdrew/pfc-toolkit/issues",
     },
     license=LICENSE,
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved",
-        "Operating System :: OS Independent",
-    ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     include_package_data=True,
@@ -30,7 +25,6 @@ setuptools.setup(
         "pfctoolkit.chunks": ["*.nii.gz", "*.gii"],
         "pfctoolkit.data": ["*.nii.gz", "*.gii"],
         "pfctoolkit.configs": ["*.json"],
-        "pfctoolkit.scripts": ["*.py"],
     },
     scripts=[
         "src/pfctoolkit/scripts/connectome_precomputed",
